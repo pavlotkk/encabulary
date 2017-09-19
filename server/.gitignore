@@ -2,6 +2,7 @@ __pycache__/
 
 *.pyc
 .idea
-debug.py
-patch.py
-server/config/local_config.py
+
+/server/config/local_config.py
+/debug.py
+/patch.py

@@ -7,3 +7,4 @@ class LocalConfig(DefaultConfig):
 
     class db:
         URI = 'sqlite:///{path}/{db_name}'.format(path=get_root_dir(), db_name='local.dictionary.db')
+
