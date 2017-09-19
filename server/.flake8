@@ -1,0 +1,15 @@
+[flake8]
+exclude = .git,__pycache__,.build
+filename = *.py
+max-complexity = 10
+max-line-length = 150
+import-order-style = pep8
+ignore =
+    #  E221 multiple spaces before operator
+    E221,
+    # comparison to True should be 'if cond is True:' or 'if cond (it's needed for SQLAlchemy)
+	E712,
+	# Q000 Remove bad quotes
+	Q000,
+	# Class or method is too complex
+	C901
