@@ -65,4 +65,3 @@ def bad_response(error, http_code=200):
 
 def un_authorized_response():
     return bad_response('Unauthorized', 401)
-

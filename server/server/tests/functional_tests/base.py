@@ -1,4 +1,5 @@
 import unittest
+
 from flask import json
 
 from server import create_app

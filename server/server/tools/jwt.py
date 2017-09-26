@@ -12,7 +12,6 @@ class Jwt:
         self._created_at = datetime.utcfromtimestamp(iat)
         self._expired_at = datetime.utcfromtimestamp(exp)
 
-
     @classmethod
     def from_http_request(cls, http_request):
         """

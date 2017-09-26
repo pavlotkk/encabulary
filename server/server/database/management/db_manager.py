@@ -1,5 +1,5 @@
 from server.database import db
-from server.database.model import *
+from server.database.model import DbLanguage, DbWordType, DbRepeat, DbUser
 
 
 def delete_db(db=db):
