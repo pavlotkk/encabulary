@@ -57,8 +57,8 @@ class BaseTestCase(unittest.TestCase):
         return self.get_json_response(
             '/api/login',
             dict(
-                email="tkachuk.pavel13@gmail.com",
-                password="XMWQk8BY4Cq477LrRby8"
+                email="test-user@domain.com",
+                password="123"
             )
         )
 

@@ -1,7 +1,7 @@
 from functools import wraps
 
 from server.api.base.request import get_current_request_token
-from server.api.base.response import un_authorized_response, invalid_token_response
+from server.api.base.response import un_authorized_response
 import server.database.queries as db_query
 from jose import jwt as jose_jwt
 
