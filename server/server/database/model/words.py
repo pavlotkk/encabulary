@@ -1,20 +1,18 @@
 import datetime
 
-from sqlalchemy import Column, Integer, Text, Boolean, DateTime
-
-from server.database import Base
+from server.database import db
 
 
-class DbWord(Base):
+class DbWord(db.Model):
     __tablename__ = 'words'
 
-    id_word = Column(Integer, primary_key=True, unique=True, index=True, autoincrement=True)
-    word = Column(Text, nullable=False, index=True)
-    transcription = Column(Text, nullable=True)
+    id_word = db.Column(db.Integer, primary_key=True, unique=True, index=True, autoincrement=True)
+    word = db.Column(db.Text, nullable=False, index=True)
+    transcription = db.Column(db.Text, nullable=True)
 
-    add_db_dts = Column(DateTime, nullable=False, default=datetime.datetime.utcnow)
+    add_db_dts = db.Column(db.DateTime, nullable=False, default=datetime.datetime.utcnow)
 
-    is_in_use = Column(Boolean, nullable=False, default=True)
+    is_in_use = db.Column(db.Boolean, nullable=False, default=True)
 
     def __repr__(self):
         return '<DbWord [{}] - {}>'.format(self.id_word, self.word)

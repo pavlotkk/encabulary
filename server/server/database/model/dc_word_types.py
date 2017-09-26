@@ -1,12 +1,11 @@
-from sqlalchemy import Column, Integer, Text
-from server.database import Base
+from server.database import db
 
 
-class DbWordType(Base):
+class DbWordType(db.Model):
     __tablename__ = 'dc_word_types'
 
-    id_type = Column(Integer, primary_key=True, autoincrement=True)
-    name = Column(Text, unique=True)
+    id_type = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    name = db.Column(db.Text, unique=True)
 
     def __init__(self, name=None):
         self.name = name

@@ -1,13 +1,11 @@
-from sqlalchemy import Column, Integer
-
-from server.database import Base
+from server.database import db
 
 
-class DbRepeat(Base):
+class DbRepeat(db.Model):
     __tablename__ = 'dc_repeats'
 
-    id_repeat = Column(Integer, primary_key=True, autoincrement=True)
-    repeat_days = Column(Integer, unique=True)
+    id_repeat = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    repeat_days = db.Column(db.Integer, unique=True)
 
     def __init__(self, repeat_days=None):
         self.repeat_days = repeat_days

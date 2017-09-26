@@ -1,20 +1,19 @@
-from sqlalchemy import Column, Integer, Text, Boolean, ForeignKey
-from server.database import Base
+from server.database import db
 from server.database.model import DbLanguage
 
 
-class DbUser(Base):
+class DbUser(db.Model):
     __tablename__ = 'users'
 
-    id_user = Column(Integer, primary_key=True, unique=True, index=True, autoincrement=True)
-    id_session = Column(Text, nullable=True)
-    id_language = Column(Integer, ForeignKey(DbLanguage.id_language), nullable=False)
+    id_user = db.Column(db.Integer, primary_key=True, unique=True, index=True, autoincrement=True)
+    id_session = db.Column(db.Text, nullable=True)
+    id_language = db.Column(db.Integer, db.ForeignKey(DbLanguage.id_language), nullable=False)
 
-    email = Column(Text, nullable=False, index=True)
-    password = Column(Text, nullable=False)
-    password_salt = Column(Text, nullable=False)
+    email = db.Column(db.Text, nullable=False, index=True)
+    password = db.Column(db.Text, nullable=False)
+    password_salt = db.Column(db.Text, nullable=False)
 
-    is_in_use = Column(Boolean, nullable=False, default=True)
+    is_in_use = db.Column(db.Boolean, nullable=False, default=True)
 
     def __init__(self, email=None, lang=None, password=None):
         self.email = email

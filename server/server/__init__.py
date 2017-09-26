@@ -1,15 +1,20 @@
-from flask import Flask
+def create_app(config=None):
+    from flask import Flask
 
-import server.views as views
-from server.config import config
-from server.database import db_session
+    import server.views as views
+    import server.api as api
+    from server.database import db
 
-app = Flask(__name__)
-app.config.from_object(config)
+    app = Flask(__name__, instance_relative_config=True)
+    app.config.from_object('config')
+    app.config.from_pyfile('config.py')
 
-app.register_blueprint(views.index_blueprint)
+    if config:
+        app.config.update(config)
 
+    db.init_app(app)
 
-@app.teardown_appcontext
-def shutdown_session(exception=None):
-    db_session.remove()
+    app.register_blueprint(views.index_blueprint)
+    app.register_blueprint(api.api_blueprint)
+
+    return app

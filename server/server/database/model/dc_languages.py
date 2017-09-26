@@ -1,16 +1,14 @@
-from sqlalchemy import Column, Integer, Text
-
-from server.database import Base
+from server.database import db
 
 
-class DbLanguage(Base):
+class DbLanguage(db.Model):
     __tablename__ = 'dc_languages'
 
     EN = 1
     RU = 2
 
-    id_language = Column(Integer, primary_key=True)
-    name = Column(Text, unique=True)
+    id_language = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.Text, unique=True)
 
     def __init__(self, id_lang=None, name=None):
         self.id_language = id_lang

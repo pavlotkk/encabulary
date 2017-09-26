@@ -10,8 +10,8 @@ def create_password_hash_and_salt(password, salt=None):
     if salt is None:
         salt = uuid.uuid4().hex
 
-    pw_bytes    = password.encode('utf-8')
-    salt_bytes  = salt.encode('utf-8')
+    pw_bytes = password.encode('utf-8')
+    salt_bytes = salt.encode('utf-8')
 
     hashed_password = hashlib.sha512(pw_bytes + salt_bytes).hexdigest()
 
