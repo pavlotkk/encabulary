@@ -2,19 +2,19 @@ from server.database import db
 from server.database.model import DbLanguage, DbWordType, DbRepeat, DbUser
 
 
-def delete_db(db=db):
+def delete_db():
     db.drop_all()
 
 
-def create_db(db=db):
+def create_db():
     db.create_all()
 
 
-def save_db_changes(db=db):
+def save_db_changes():
     db.session.commit()
 
 
-def init_db_with_default_values(db=db):
+def init_db_with_default_values():
     db_languages = [
         DbLanguage(DbLanguage.EN, 'English'),
         DbLanguage(DbLanguage.RU, 'Russian')
@@ -40,7 +40,8 @@ def init_db_with_default_values(db=db):
     db.session.add_all(db_word_types)
 
     db_users = [
-        DbUser("demo", DbLanguage.RU, "demo")
+        DbUser("demo", DbLanguage.RU, "demo"),
+        DbUser("paul", DbLanguage.RU, "paul")
     ]
     db.session.add_all(db_users)
 
