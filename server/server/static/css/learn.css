@@ -1,0 +1,28 @@
+#errorContainer {
+    text-align: center;
+    color: white;
+}
+
+#wordsContainer, #wordsContainer > div {
+    display: none;
+}
+
+p.repeat {
+    font-size: small;
+}
+
+#finishContainer {
+    display: none;
+}
+
+table > thead > tr > th {
+    text-align: center;
+}
+
+#result table > tbody > tr > td {
+    border-top: 1px solid #000;
+}
+
+#result table > thead > tr > th {
+    border-bottom: 2px solid #000;
+}

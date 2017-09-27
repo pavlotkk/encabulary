@@ -41,7 +41,7 @@ def init_db_with_default_values():
 
     db_users = [
         DbUser("demo", DbLanguage.RU, "demo"),
-        DbUser("paul", DbLanguage.RU, "paul")
+        DbUser("tkachuk.pavel13@gmail.com", DbLanguage.RU, "dEFFOrad2umP")
     ]
     db.session.add_all(db_users)
 
