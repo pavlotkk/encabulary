@@ -3,7 +3,7 @@ from server.tests.functional_tests.base import BaseAuthTestCase
 from server.database import db
 
 
-class TestAddToDictionary(BaseAuthTestCase):
+class TestAddWord(BaseAuthTestCase):
 
     def test_word_requirement(self):
         response = self.add_word(params={})
@@ -26,4 +26,4 @@ class TestAddToDictionary(BaseAuthTestCase):
             self.assertIsNotNone(db_word)
 
     def add_word(self, params):
-        return self.get_json_response('/api/words', method='POST', params=params)
+        return self.get_json_response('/api/word', method='POST', params=params)

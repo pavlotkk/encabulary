@@ -33,6 +33,28 @@ class AddWordAPI(MethodView):
 
         return ok_response({'id_word': db_word.id_word})
 
+    def put(self):
+        request = get_current_request()
+
+        user_id = get_current_user_id()
+
+        id_word = request.get_int('id_word')
+        word = request.get_string('word')
+        transcription = request.get_string('transcription')
+
+        if not word:
+            return bad_response('word is required')
+
+        current_user = users_query.get_db_user_by_id(user_id)
+
+        db_word = self.add_word_to_db(
+            word,
+            current_user.id_language,
+            transcription
+        )
+
+        return ok_response({'id_word': db_word.id_word})
+
     def add_word_to_db(self, word, lang_id, transcription=None):
         db_word = db.session.query(
             DbWord
