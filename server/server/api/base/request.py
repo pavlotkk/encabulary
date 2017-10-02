@@ -71,6 +71,9 @@ class JsonRequestDecorator(BaseRequestDecorator):
         if self.json_request is None and self.http_request.data:
             self.json_request = self.http_request.get_json()
 
+        if self.json_request is None:
+            return None
+
         value = self.json_request.get(field)
 
         if not types.is_none_or_empty(value):
