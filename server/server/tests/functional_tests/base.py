@@ -37,14 +37,18 @@ class BaseTestCase(unittest.TestCase):
         pass
 
     def get_json_response(self, url, params=None, headers=None, method=None):
-        if method is None or method.lower() == "post":
-            raw_response = self.client.post(
-                url,
-                data=json.dumps(params),
-                headers=headers,
-                content_type='application/json').data
-        else:
-            raw_response = self.client.get(url, data=params, headers=headers).data
+        method = method or 'POST'
+
+        if method in ['POST', 'PUT']:
+            params = json.dumps(params)
+
+        raw_response = self.client.open(
+            url,
+            method=method,
+            data=params,
+            headers=headers,
+            content_type='application/json'
+        ).data
 
         try:
             return json.loads(raw_response)
