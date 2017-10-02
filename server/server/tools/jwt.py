@@ -1,6 +1,7 @@
 from datetime import datetime
 
 from jose import jwt as jose_jwt
+from jose import exceptions as jose_ex
 from server.tools import dates
 from flask import current_app
 
@@ -86,7 +87,7 @@ class Jwt:
                 'access_token': access_token,
                 'exp': dates.to_iso_datetime_string(token_expired)
             }
-        except jose_jwt.JWTError:
+        except jose_ex.JWTError:
             return None
 
     @staticmethod
@@ -112,7 +113,7 @@ class Jwt:
                 'access_token': access_token,
                 'exp': dates.to_iso_datetime_string(expires)
             }
-        except jose_jwt.JWTError as e:
+        except jose_ex.JWTError as e:
             return None
 
     @staticmethod

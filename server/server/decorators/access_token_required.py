@@ -3,7 +3,7 @@ from functools import wraps
 from server.api.base.request import get_current_request_token
 from server.api.base.response import un_authorized_response
 import server.database.queries as db_query
-from jose import jwt as jose_jwt
+from jose import exceptions as jose_ex
 
 
 def access_token_required(fn):
@@ -12,7 +12,7 @@ def access_token_required(fn):
     def is_token_accepted(*args, **kwargs):
         try:
             token = get_current_request_token(silent=False)
-        except ValueError or jose_jwt.ExpiredSignatureError or jose_jwt.JWTError:
+        except (ValueError, jose_ex.ExpiredSignatureError, jose_ex.JWTError):
             return un_authorized_response()
 
         db_user = db_query.get_db_user_by_id(token.user_id)
