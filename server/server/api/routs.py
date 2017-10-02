@@ -10,4 +10,4 @@ api_blueprint.add_url_rule('/api/logout', view_func=LogoutAPI.as_view('logout'),
 
 word_api_view = AddWordAPI.as_view('word')
 api_blueprint.add_url_rule('/api/word', view_func=word_api_view, methods=['POST'])
-api_blueprint.add_url_rule('/api/word/<int:id_word>', view_func=word_api_view, methods=['PUT', 'GET'])
+api_blueprint.add_url_rule('/api/word/<int:id_word>', view_func=word_api_view, methods=['PUT', 'GET', 'DELETE'])

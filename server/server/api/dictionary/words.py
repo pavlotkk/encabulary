@@ -70,6 +70,17 @@ class AddWordAPI(MethodView):
             'word': db_word_to_dict
         })
 
+    @access_token_required
+    def delete(self, id_word):
+        user_id = get_current_user_id()
+
+        try:
+            self.delete_db_word_or_raise_exception(user_id, id_word)
+        except ObjectDoesNotExists as e:
+            return bad_response(str(e))
+
+        return ok_response()
+
     def add_word_to_db(self, id_user, word, transcription=None):
         db_word = db.session.query(
             DbWord
@@ -124,3 +135,19 @@ class AddWordAPI(MethodView):
             raise ObjectDoesNotExists('word with id <{}> does not exists'.format(id_word))
 
         return db_word
+
+    def delete_db_word_or_raise_exception(self, id_user, id_word):
+
+        db_word = db.session.query(
+            DbWord
+        ).filter(
+            DbWord.id_user == id_user,
+            DbWord.id_word == id_word,
+            DbWord.is_in_use == True
+        ).first()
+
+        if not db_word:
+            raise ObjectDoesNotExists('word with id <{}> does not exists'.format(id_word))
+
+        db_word.is_in_use = False
+        save_db_changes()
