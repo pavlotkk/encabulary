@@ -101,23 +101,6 @@ class AddWordAPI(MethodView):
 
         return db_word
 
-    def update_db_word_or_raise_exception(self, id_user, id_word, word, transcription=None):
-        db_word = db.session.query(
-            DbWord
-        ).filter(
-            DbWord.id_user == id_user,
-            DbWord.id_word == id_word,
-            DbWord.is_in_use == True
-        ).first()
-
-        if not db_word:
-            raise ObjectDoesNotExists('word with id <{}> does not exists'.format(id_word))
-
-        db_word.word = word
-        db_word.transcription = transcription
-
-        save_db_changes()
-
     def get_db_word_or_raise_exception(self, id_user, id_word):
         """
         :rtype: DbWord
@@ -136,18 +119,17 @@ class AddWordAPI(MethodView):
 
         return db_word
 
+    def update_db_word_or_raise_exception(self, id_user, id_word, word, transcription=None):
+        db_word = self.get_db_word_or_raise_exception(id_user, id_word)
+
+        db_word.word = word
+        db_word.transcription = transcription
+
+        save_db_changes()
+
     def delete_db_word_or_raise_exception(self, id_user, id_word):
 
-        db_word = db.session.query(
-            DbWord
-        ).filter(
-            DbWord.id_user == id_user,
-            DbWord.id_word == id_word,
-            DbWord.is_in_use == True
-        ).first()
-
-        if not db_word:
-            raise ObjectDoesNotExists('word with id <{}> does not exists'.format(id_word))
+        db_word = self.get_db_word_or_raise_exception(id_user, id_word)
 
         db_word.is_in_use = False
         save_db_changes()
