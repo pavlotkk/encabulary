@@ -21,6 +21,7 @@ class BaseTestCase(unittest.TestCase):
     def setUp(self):
         self.app = self.create_test_app()
         self.client = self.app.test_client()
+        self.test_user_id = None
 
         with self.app.app_context():
             db_manager.delete_db()
@@ -30,6 +31,8 @@ class BaseTestCase(unittest.TestCase):
             test_user = DbUser('test-user@domain.com', 1, '123')
             db.session.add(test_user)
             db_manager.save_db_changes()
+
+            self.test_user_id = test_user.id_user
 
             db.session.remove()
 

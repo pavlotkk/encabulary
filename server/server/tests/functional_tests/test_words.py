@@ -36,14 +36,14 @@ class TestUpdateWord(BaseAuthTestCase):
 
         self.id_word = None
         with self.app.app_context():
-            db_word = DbWord('__test__')
+            db_word = DbWord(self.test_user_id, '__test__')
             db.session.add(db_word)
             db.session.commit()
 
             self.id_word = db_word.id_word
 
     def test_word_requirement(self):
-        response = self.update_word(1, {})
+        response = self.update_word(self.id_word, {})
 
         self.assertIsNotNone(response['error'])
 
