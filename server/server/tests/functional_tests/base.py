@@ -19,10 +19,10 @@ class BaseTestCase(unittest.TestCase):
         return app
 
     def setUp(self):
-        application = self.create_test_app()
-        self.app = application.test_client()
+        self.app = self.create_test_app()
+        self.client = self.app.test_client()
 
-        with application.app_context():
+        with self.app.app_context():
             db_manager.delete_db()
             db_manager.create_db()
             db_manager.init_db_with_default_values()
@@ -38,10 +38,13 @@ class BaseTestCase(unittest.TestCase):
 
     def get_json_response(self, url, params=None, headers=None, method=None):
         if method is None or method.lower() == "post":
-            raw_response = self.app.post(url, data=json.dumps(params), headers=headers,
-                                         content_type='application/json').data
+            raw_response = self.client.post(
+                url,
+                data=json.dumps(params),
+                headers=headers,
+                content_type='application/json').data
         else:
-            raw_response = self.app.get(url, data=params, headers=headers).data
+            raw_response = self.client.get(url, data=params, headers=headers).data
 
         try:
             return json.loads(raw_response)
@@ -50,7 +53,7 @@ class BaseTestCase(unittest.TestCase):
             return None
 
     def get_json_multipart_response(self, url, params=None, headers=None):
-        raw_response = self.app.post(url, content_type='multipart/form-data', data=params, headers=headers).data
+        raw_response = self.client.post(url, content_type='multipart/form-data', data=params, headers=headers).data
 
         return json.loads(raw_response)
 
@@ -65,3 +68,10 @@ class BaseTestCase(unittest.TestCase):
 
     def print_json(self, json_dict, message=None):
         print("{}\n{}\n---------------\n".format(message, json.dumps(json_dict, indent=3, sort_keys=True, ensure_ascii=False)))
+
+
+class BaseAuthTestCase(BaseTestCase):
+    def setUp(self):
+        super().setUp()
+
+        self.get_login_response()
