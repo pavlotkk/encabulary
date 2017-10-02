@@ -65,3 +65,30 @@ class TestUpdateWord(BaseAuthTestCase):
 
     def update_word(self, id_word, params):
         return self.get_json_response('/api/word/{}'.format(id_word), method='PUT', params=params)
+
+
+class TestGetWord(BaseAuthTestCase):
+
+    def setUp(self):
+        super().setUp()
+
+        self.id_word = None
+        with self.app.app_context():
+            db_word = DbWord(self.test_user_id, '__test__')
+            db.session.add(db_word)
+            db.session.commit()
+
+            self.id_word = db_word.id_word
+
+    def test_word_does_not_exists(self):
+        response = self.get_word(0)
+
+        self.assertIsNotNone(response['error'])
+
+    def test_success_get_word(self):
+        response = self.get_word(self.id_word)
+
+        self.assertIsNotNone(response['data']['word'])
+
+    def get_word(self, id_word):
+        return self.get_json_response('/api/word/{}'.format(id_word), method='GET')
