@@ -1,5 +1,6 @@
 from flask.views import MethodView
 
+from server.api.base.errors import ObjectDoesNotExists
 from server.api.base.request import get_current_user_id, get_current_request
 from server.api.base.response import bad_response, ok_response
 from server.database import db
@@ -33,27 +34,22 @@ class AddWordAPI(MethodView):
 
         return ok_response({'id_word': db_word.id_word})
 
-    def put(self):
+    @access_token_required
+    def put(self, id_word):
         request = get_current_request()
 
-        user_id = get_current_user_id()
-
-        id_word = request.get_int('id_word')
         word = request.get_string('word')
         transcription = request.get_string('transcription')
 
         if not word:
             return bad_response('word is required')
 
-        current_user = users_query.get_db_user_by_id(user_id)
+        try:
+            self.update_db_word_or_raise_exception(id_word, word, transcription)
+        except ObjectDoesNotExists as e:
+            return bad_response(str(e))
 
-        db_word = self.add_word_to_db(
-            word,
-            current_user.id_language,
-            transcription
-        )
-
-        return ok_response({'id_word': db_word.id_word})
+        return ok_response()
 
     def add_word_to_db(self, word, lang_id, transcription=None):
         db_word = db.session.query(
@@ -77,3 +73,19 @@ class AddWordAPI(MethodView):
         save_db_changes()
 
         return db_word
+
+    def update_db_word_or_raise_exception(self, id_word, word, transcription=None):
+        db_word = db.session.query(
+            DbWord
+        ).filter(
+            DbWord.id_word == id_word,
+            DbWord.is_in_use == True
+        ).first()
+
+        if not db_word:
+            raise ObjectDoesNotExists('word with id <{}> does not exists'.format(id_word))
+
+        db_word.word = word
+        db_word.transcription = transcription
+
+        save_db_changes()
