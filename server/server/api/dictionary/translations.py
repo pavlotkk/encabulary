@@ -62,7 +62,7 @@ class TranslationsAPI(MethodView):
     @access_token_required
     def put(self, id_translation):
         request = get_current_request()
-        current_user = get_db_user_by_id(get_current_user_id())
+        current_user_id = get_current_user_id()
 
         id_word_type = request.get_int('id_word_type')
         translation = request.get_string('translation')
@@ -73,10 +73,21 @@ class TranslationsAPI(MethodView):
         try:
             self._update_db_translation_or_raise_exception(
                 id_translation,
-                current_user.id_user,
+                current_user_id,
                 id_word_type,
                 translation
             )
+        except ObjectDoesNotExists as e:
+            return bad_response(str(e))
+
+        return ok_response()
+
+    @access_token_required
+    def delete(self, id_translation):
+        current_user_id = get_current_user_id()
+
+        try:
+            self._delete_db_translation_or_raise_exception(id_translation, current_user_id)
         except ObjectDoesNotExists as e:
             return bad_response(str(e))
 
@@ -138,10 +149,16 @@ class TranslationsAPI(MethodView):
         return db_translation
 
     def _update_db_translation_or_raise_exception(self, id_translation, id_user, id_word_type, translation):
-        """:rtype: DbTranslation"""
         db_translation = self._get_db_translation_or_raise_exception(id_translation, id_user)
 
         db_translation.id_word_type = id_word_type
         db_translation.translation = translation
+
+        save_db_changes()
+
+    def _delete_db_translation_or_raise_exception(self, id_translation, id_user):
+        db_translation = self._get_db_translation_or_raise_exception(id_translation, id_user)
+
+        db_translation.is_in_use = False
 
         save_db_changes()

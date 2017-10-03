@@ -16,4 +16,4 @@ api_blueprint.add_url_rule('/api/word/<int:id_word>', view_func=word_api_view, m
 translation_api_view = TranslationsAPI.as_view('translation')
 api_blueprint.add_url_rule('/api/translation', view_func=translation_api_view, methods=['POST'])
 api_blueprint.add_url_rule('/api/translation/<int:id_translation>', view_func=translation_api_view,
-                           methods=['GET', 'PUT'])
+                           methods=['GET', 'PUT', 'DELETE'])

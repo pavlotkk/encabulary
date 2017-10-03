@@ -119,3 +119,38 @@ class TranslationUpdateTestCase(BaseAuthTestCase):
 
     def _update_translation(self, id_translation, params):
         return self.get_json_response('/api/translation/{}'.format(id_translation), method='PUT', params=params)
+
+
+class TranslationDeleteTestCase(BaseAuthTestCase):
+    def setUp(self):
+        super().setUp()
+
+        self.id_translation = None
+        with self.app.app_context():
+            db_word = DbWord(self.test_user_id, '__test__')
+            db.session.add(db_word)
+            db.session.flush()
+
+            db_tr = DbTranslation(db_word.id_word, DbLanguage.RU, 1, '__translation__')
+            db.session.add(db_tr)
+
+            db.session.commit()
+
+            self.id_translation = db_tr.id_translation
+
+    def test_delete_translation_with_error(self):
+        response = self._delete_translation(0)
+
+        self.assertIsNotNone(response['error'])
+
+    def test_delete_translation(self):
+        response = self._delete_translation(self.id_translation)
+
+        self.assertIsNone(response['error'])
+        with self.app.app_context():
+            db_tr = db.session.query(DbTranslation).get(self.id_translation)
+            self.assertIsNotNone(db_tr)
+            self.assertEqual(db_tr.is_in_use, False)
+
+    def _delete_translation(self, id_translation):
+        return self.get_json_response('/api/translation/{}'.format(id_translation), method='DELETE', params={})
