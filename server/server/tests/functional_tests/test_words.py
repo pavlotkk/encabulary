@@ -29,8 +29,7 @@ class TestAddWord(BaseAuthTestCase):
         return self.get_json_response('/api/word', method='POST', params=params)
 
 
-class TestUpdateWord(BaseAuthTestCase):
-
+class BaseWordTestCase(BaseAuthTestCase):
     def setUp(self):
         super().setUp()
 
@@ -41,6 +40,9 @@ class TestUpdateWord(BaseAuthTestCase):
             db.session.commit()
 
             self.id_word = db_word.id_word
+
+
+class TestUpdateWord(BaseWordTestCase):
 
     def test_word_requirement(self):
         response = self.update_word(self.id_word, {})
@@ -67,18 +69,7 @@ class TestUpdateWord(BaseAuthTestCase):
         return self.get_json_response('/api/word/{}'.format(id_word), method='PUT', params=params)
 
 
-class TestGetWord(BaseAuthTestCase):
-
-    def setUp(self):
-        super().setUp()
-
-        self.id_word = None
-        with self.app.app_context():
-            db_word = DbWord(self.test_user_id, '__test__')
-            db.session.add(db_word)
-            db.session.commit()
-
-            self.id_word = db_word.id_word
+class TestGetWord(BaseWordTestCase):
 
     def test_word_does_not_exists(self):
         response = self.get_word(0)
@@ -94,18 +85,7 @@ class TestGetWord(BaseAuthTestCase):
         return self.get_json_response('/api/word/{}'.format(id_word), method='GET')
 
 
-class TestDeleteWord(BaseAuthTestCase):
-
-    def setUp(self):
-        super().setUp()
-
-        self.id_word = None
-        with self.app.app_context():
-            db_word = DbWord(self.test_user_id, '__test__')
-            db.session.add(db_word)
-            db.session.commit()
-
-            self.id_word = db_word.id_word
+class TestDeleteWord(BaseWordTestCase):
 
     def test_word_does_not_exists(self):
         response = self.delete_word(0)

@@ -54,7 +54,7 @@ class TranslationAddTestCase(BaseAuthTestCase):
         return self.get_json_response('/api/translation', method='POST', params=params)
 
 
-class TranslationGetTestCase(BaseAuthTestCase):
+class BaseTranslationTestCase(BaseAuthTestCase):
     def setUp(self):
         super().setUp()
 
@@ -70,6 +70,9 @@ class TranslationGetTestCase(BaseAuthTestCase):
             db.session.commit()
 
             self.id_translation = db_tr.id_translation
+
+
+class TranslationGetTestCase(BaseTranslationTestCase):
 
     def test_get_translation_with_error(self):
         response = self._get_translation(0)
@@ -86,22 +89,7 @@ class TranslationGetTestCase(BaseAuthTestCase):
         return self.get_json_response('/api/translation/{}'.format(id_translation), method='GET', params={})
 
 
-class TranslationUpdateTestCase(BaseAuthTestCase):
-    def setUp(self):
-        super().setUp()
-
-        self.id_translation = None
-        with self.app.app_context():
-            db_word = DbWord(self.test_user_id, '__test__')
-            db.session.add(db_word)
-            db.session.flush()
-
-            db_tr = DbTranslation(db_word.id_word, DbLanguage.RU, 1, '__translation__')
-            db.session.add(db_tr)
-
-            db.session.commit()
-
-            self.id_translation = db_tr.id_translation
+class TranslationUpdateTestCase(BaseTranslationTestCase):
 
     def test_update_translation_required(self):
         response = self._update_translation(self.id_translation, {})
@@ -121,22 +109,7 @@ class TranslationUpdateTestCase(BaseAuthTestCase):
         return self.get_json_response('/api/translation/{}'.format(id_translation), method='PUT', params=params)
 
 
-class TranslationDeleteTestCase(BaseAuthTestCase):
-    def setUp(self):
-        super().setUp()
-
-        self.id_translation = None
-        with self.app.app_context():
-            db_word = DbWord(self.test_user_id, '__test__')
-            db.session.add(db_word)
-            db.session.flush()
-
-            db_tr = DbTranslation(db_word.id_word, DbLanguage.RU, 1, '__translation__')
-            db.session.add(db_tr)
-
-            db.session.commit()
-
-            self.id_translation = db_tr.id_translation
+class TranslationDeleteTestCase(BaseTranslationTestCase):
 
     def test_delete_translation_with_error(self):
         response = self._delete_translation(0)
