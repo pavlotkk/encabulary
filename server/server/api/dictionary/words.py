@@ -10,7 +10,7 @@ from server.decorators.access_token_required import access_token_required
 from server.tools import dates
 
 
-class AddWordAPI(MethodView):
+class WordAPI(MethodView):
 
     @access_token_required
     def post(self):
