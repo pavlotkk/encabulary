@@ -75,7 +75,7 @@ class WordAPI(MethodView):
         user_id = get_current_user_id()
 
         try:
-            self.delete_db_word_or_raise_exception(user_id, id_word)
+            self.delete_cascade_db_word_or_raise_exception(user_id, id_word)
         except ObjectDoesNotExists as e:
             return bad_response(str(e))
 
@@ -127,7 +127,7 @@ class WordAPI(MethodView):
 
         save_db_changes()
 
-    def delete_db_word_or_raise_exception(self, id_user, id_word):
+    def delete_cascade_db_word_or_raise_exception(self, id_user, id_word):
 
         db_word = self.get_db_word_or_raise_exception(id_user, id_word)
 
