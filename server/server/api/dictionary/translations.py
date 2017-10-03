@@ -7,9 +7,12 @@ from server.database import db
 from server.database.management.db_manager import save_db_changes
 from server.database.model import DbWord, DbTranslation
 from server.database.queries.users import get_db_user_by_id
+from server.decorators.access_token_required import access_token_required
 
 
 class TranslationsAPI(MethodView):
+
+    @access_token_required
     def post(self):
         request = get_current_request()
         current_user = get_db_user_by_id(get_current_user_id())
