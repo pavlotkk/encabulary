@@ -5,7 +5,7 @@ from server.api.base.request import get_current_user_id, get_current_request
 from server.api.base.response import bad_response, ok_response
 from server.database import db
 from server.database.management.db_manager import save_db_changes
-from server.database.model import DbWord
+from server.database.model import DbWord, DbTranslation
 from server.decorators.access_token_required import access_token_required
 from server.tools import dates
 
@@ -132,4 +132,13 @@ class WordAPI(MethodView):
         db_word = self.get_db_word_or_raise_exception(id_user, id_word)
 
         db_word.is_in_use = False
+
+        db.session.query(
+            DbTranslation
+        ).filter(
+            DbTranslation.id_word == id_word
+        ).update({
+            DbTranslation.is_in_use: False
+        })
+
         save_db_changes()
