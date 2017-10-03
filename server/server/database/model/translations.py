@@ -10,7 +10,7 @@ class DbTranslation(db.Model):
     id_translation = db.Column(db.Integer, primary_key=True, unique=True, autoincrement=True)
     id_word = db.Column(db.Integer, db.ForeignKey(DbWord.id_word), nullable=False)
     id_language = db.Column(db.Integer, db.ForeignKey(DbLanguage.id_language), nullable=False)
-    id_type = db.Column(db.Integer, db.ForeignKey(DbWordType.id_type), nullable=True)
+    id_word_type = db.Column(db.Integer, db.ForeignKey(DbWordType.id_type), nullable=True)
 
     translation = db.Column(db.Text, nullable=False, index=True)
 
