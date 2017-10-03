@@ -28,7 +28,7 @@ class TranslationsAPI(MethodView):
             return bad_response('translation is required')
 
         try:
-            db_translation = self._add_translation_or_raise_exception(
+            db_translation = self._add_db_translation_or_raise_exception(
                 current_user.id_user,
                 id_word,
                 id_word_type,
@@ -59,6 +59,29 @@ class TranslationsAPI(MethodView):
 
         return ok_response({'translation': db_tr_to_dic})
 
+    @access_token_required
+    def put(self, id_translation):
+        request = get_current_request()
+        current_user = get_db_user_by_id(get_current_user_id())
+
+        id_word_type = request.get_int('id_word_type')
+        translation = request.get_string('translation')
+
+        if not translation:
+            return bad_response('translation is required')
+
+        try:
+            self._update_db_translation_or_raise_exception(
+                id_translation,
+                current_user.id_user,
+                id_word_type,
+                translation
+            )
+        except ObjectDoesNotExists as e:
+            return bad_response(str(e))
+
+        return ok_response()
+
     def _get_db_translation_or_raise_exception(self, id_translation, id_user):
         """:rtype: DbTranslation"""
         db_tr = db.session.query(
@@ -76,7 +99,7 @@ class TranslationsAPI(MethodView):
 
         return db_tr
 
-    def _add_translation_or_raise_exception(self, id_user, id_word, id_word_type, id_lang, translation):
+    def _add_db_translation_or_raise_exception(self, id_user, id_word, id_word_type, id_lang, translation):
         """:rtype: DbTranslation"""
         db_word_exists = db.session.query(
             db.session.query(
@@ -113,3 +136,12 @@ class TranslationsAPI(MethodView):
         save_db_changes()
 
         return db_translation
+
+    def _update_db_translation_or_raise_exception(self, id_translation, id_user, id_word_type, translation):
+        """:rtype: DbTranslation"""
+        db_translation = self._get_db_translation_or_raise_exception(id_translation, id_user)
+
+        db_translation.id_word_type = id_word_type
+        db_translation.translation = translation
+
+        save_db_changes()

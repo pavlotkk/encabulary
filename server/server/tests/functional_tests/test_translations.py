@@ -84,3 +84,38 @@ class TranslationGetTestCase(BaseAuthTestCase):
 
     def _get_translation(self, id_translation):
         return self.get_json_response('/api/translation/{}'.format(id_translation), method='GET', params={})
+
+
+class TranslationUpdateTestCase(BaseAuthTestCase):
+    def setUp(self):
+        super().setUp()
+
+        self.id_translation = None
+        with self.app.app_context():
+            db_word = DbWord(self.test_user_id, '__test__')
+            db.session.add(db_word)
+            db.session.flush()
+
+            db_tr = DbTranslation(db_word.id_word, DbLanguage.RU, 1, '__translation__')
+            db.session.add(db_tr)
+
+            db.session.commit()
+
+            self.id_translation = db_tr.id_translation
+
+    def test_update_translation_required(self):
+        response = self._update_translation(self.id_translation, {})
+
+        self.assertIsNotNone(response['error'])
+
+    def test_update_translation(self):
+        response = self._update_translation(self.id_translation, {'translation': '__edit_translation__'})
+
+        self.assertIsNone(response['error'])
+        with self.app.app_context():
+            db_tr = db.session.query(DbTranslation).get(self.id_translation)
+            self.assertIsNotNone(db_tr)
+            self.assertEqual(db_tr.translation, '__edit_translation__')
+
+    def _update_translation(self, id_translation, params):
+        return self.get_json_response('/api/translation/{}'.format(id_translation), method='PUT', params=params)
