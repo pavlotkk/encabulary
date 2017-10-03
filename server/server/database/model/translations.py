@@ -18,9 +18,10 @@ class DbTranslation(db.Model):
 
     is_in_use = db.Column(db.Boolean, nullable=False, default=True)
 
-    def __init__(self, id_word=None, id_lang=None, translation=None):
+    def __init__(self, id_word=None, id_lang=None, id_word_type=None, translation=None):
         self.id_word = id_word
         self.id_language = id_lang
+        self.id_word_type = id_word_type
         self.translation = translation
 
     def __repr__(self):

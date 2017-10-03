@@ -40,6 +40,42 @@ class TranslationsAPI(MethodView):
 
         return ok_response({'id_translation': db_translation.id_translation})
 
+    @access_token_required
+    def get(self, id_translation):
+        current_user_id = get_current_user_id()
+
+        try:
+            db_tr = self._get_db_translation_or_raise_exception(id_translation, current_user_id)
+        except ObjectDoesNotExists as e:
+            return bad_response(str(e))
+
+        db_tr_to_dic = {
+            'id_translation': db_tr.id_translation,
+            'id_word': db_tr.id_word,
+            'id_word_type': db_tr.id_word,
+            'id_lang': db_tr.id_language,
+            'translation': db_tr.translation
+        }
+
+        return ok_response({'translation': db_tr_to_dic})
+
+    def _get_db_translation_or_raise_exception(self, id_translation, id_user):
+        """:rtype: DbTranslation"""
+        db_tr = db.session.query(
+            DbTranslation
+        ).join(
+            DbWord,
+            (DbTranslation.id_word == DbWord.id_word) & (DbWord.id_user == id_user)
+        ).filter(
+            DbTranslation.id_translation == id_translation,
+            DbTranslation.is_in_use == True
+        ).first()
+
+        if db_tr is None:
+            raise ObjectDoesNotExists('translation <{}> does not exists'.format(id_translation))
+
+        return db_tr
+
     def _add_translation_or_raise_exception(self, id_user, id_word, id_word_type, id_lang, translation):
         """:rtype: DbTranslation"""
         db_word_exists = db.session.query(

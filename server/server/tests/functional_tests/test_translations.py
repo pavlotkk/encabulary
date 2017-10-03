@@ -1,5 +1,5 @@
 from server.database import db
-from server.database.model import DbWord, DbTranslation
+from server.database.model import DbWord, DbTranslation, DbLanguage
 from server.tests.functional_tests.base import BaseAuthTestCase
 
 
@@ -52,3 +52,35 @@ class TranslationAddTestCase(BaseAuthTestCase):
 
     def _add_translation(self, params):
         return self.get_json_response('/api/translation', method='POST', params=params)
+
+
+class TranslationGetTestCase(BaseAuthTestCase):
+    def setUp(self):
+        super().setUp()
+
+        self.id_translation = None
+        with self.app.app_context():
+            db_word = DbWord(self.test_user_id, '__test__')
+            db.session.add(db_word)
+            db.session.flush()
+
+            db_tr = DbTranslation(db_word.id_word, DbLanguage.RU, 1, '__translation__')
+            db.session.add(db_tr)
+
+            db.session.commit()
+
+            self.id_translation = db_tr.id_translation
+
+    def test_get_translation_with_error(self):
+        response = self._get_translation(0)
+
+        self.assertIsNotNone(response['error'])
+
+    def test_get_translation(self):
+        response = self._get_translation(self.id_translation)
+
+        self.assertIsNone(response['error'])
+        self.assertIsNotNone(response['data'].get('translation'))
+
+    def _get_translation(self, id_translation):
+        return self.get_json_response('/api/translation/{}'.format(id_translation), method='GET', params={})
