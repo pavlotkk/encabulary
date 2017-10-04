@@ -4,6 +4,7 @@ from server.api.auth.login import LoginAPI
 from server.api.auth.logout import LogoutAPI
 from server.api.dictionary.words import WordAPI
 from server.api.dictionary.translations import TranslationsAPI
+from server.api.dictionary.learn import LearnAPI
 
 api_blueprint = Blueprint('api_blueprint', __name__)
 api_blueprint.add_url_rule('/api/login', view_func=LoginAPI.as_view('login'), methods=['POST'])
@@ -17,3 +18,6 @@ translation_api_view = TranslationsAPI.as_view('translation')
 api_blueprint.add_url_rule('/api/translation', view_func=translation_api_view, methods=['POST'])
 api_blueprint.add_url_rule('/api/translation/<int:id_translation>', view_func=translation_api_view,
                            methods=['GET', 'PUT', 'DELETE'])
+
+learn_api_view = LearnAPI.as_view('learn')
+api_blueprint.add_url_rule('/api/learn', view_func=learn_api_view, methods=['GET'])

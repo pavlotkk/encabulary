@@ -5,7 +5,7 @@ from flask import json
 from server import create_app
 from server.database import db
 from server.database.management import db_manager
-from server.database.model import DbUser
+from server.database.model import DbUser, DbLanguage
 from server.globals import get_root_dir
 
 
@@ -28,7 +28,7 @@ class BaseTestCase(unittest.TestCase):
             db_manager.create_db()
             db_manager.init_db_with_default_values()
 
-            test_user = DbUser('test', 1, 'test')
+            test_user = DbUser('test', DbLanguage.RU, 'test')
             db.session.add(test_user)
             db_manager.save_db_changes()
 
