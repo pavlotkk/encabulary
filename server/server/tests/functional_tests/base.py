@@ -28,10 +28,11 @@ class BaseTestCase(unittest.TestCase):
             db_manager.create_db()
             db_manager.init_db_with_default_values()
 
-            test_user = DbUser('test-user@domain.com', 1, '123')
+            test_user = DbUser('test', 1, 'test')
             db.session.add(test_user)
             db_manager.save_db_changes()
 
+            db_manager.add_db_words(test_user)
             self.test_user_id = test_user.id_user
 
             db.session.remove()
@@ -68,8 +69,8 @@ class BaseTestCase(unittest.TestCase):
         return self.get_json_response(
             '/api/login',
             dict(
-                email="test-user@domain.com",
-                password="123"
+                email="test",
+                password="test"
             )
         )
 

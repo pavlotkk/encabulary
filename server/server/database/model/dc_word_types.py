@@ -12,3 +12,15 @@ class DbWordType(db.Model):
 
     def __repr__(self):
         return '<DbWordType {}>'.format(self.name)
+
+    @staticmethod
+    def get_id_by_name(name):
+        if not name:
+            return None
+
+        db_type = db.session.query(DbWordType).filter(DbWordType.name.ilike(name)).first()
+
+        if not db_type:
+            return None
+
+        return db_type.id_type

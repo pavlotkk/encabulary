@@ -10,12 +10,12 @@ class DbWord(db.Model):
     id_word = db.Column(db.Integer, primary_key=True, unique=True, index=True, autoincrement=True)
     id_user = db.Column(db.Integer, db.ForeignKey(DbUser.id_user), index=True, nullable=False)
 
-    word = db.Column(db.Text, nullable=False, index=True, unique=True)
+    word = db.Column(db.Text, nullable=False, index=True)
     transcription = db.Column(db.Text, nullable=True)
 
     score = db.Column(db.Integer, nullable=False, index=True, default=0)
     is_learnt = db.Column(db.Boolean, nullable=False, default=False)
-    last_learn_db_dts = db.Column(db.DateTime, nullable=False, default=datetime.datetime.utcnow)
+    last_learn_db_dts = db.Column(db.DateTime, nullable=True)
 
     add_db_dts = db.Column(db.DateTime, nullable=False, default=datetime.datetime.utcnow)
 
