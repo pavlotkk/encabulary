@@ -33,12 +33,12 @@ def init_db_with_default_values():
     db.session.add_all(db_repeats)
 
     db_word_types = [
-        DbWordType("Noun"),
-        DbWordType("Verb"),
-        DbWordType("Adjective"),
-        DbWordType("Adverb"),
-        DbWordType("Preposition"),
-        DbWordType("Phrasal verb")
+        DbWordType("noun"),
+        DbWordType("verb"),
+        DbWordType("adjective"),
+        DbWordType("adverb"),
+        DbWordType("preposition"),
+        DbWordType("phrasal verb")
     ]
     db.session.add_all(db_word_types)
 
