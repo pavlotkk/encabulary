@@ -62,13 +62,14 @@ def add_db_words(db_user):
         db.session.add(db_word)
         db.session.flush()
 
-        db_translation = DbTranslation(
-            db_word.id_word,
-            DbLanguage.RU,
-            DbWordType.get_id_by_name(line['id_type']),
-            line['ru']
-        )
+        for tr in line['ru'].split(';'):
+            db_translation = DbTranslation(
+                db_word.id_word,
+                DbLanguage.RU,
+                DbWordType.get_id_by_name(line['id_type']),
+                tr
+            )
 
-        db.session.add(db_translation)
+            db.session.add(db_translation)
 
     save_db_changes()
