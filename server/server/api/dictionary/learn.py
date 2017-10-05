@@ -15,8 +15,9 @@ from server.tools import types
 
 
 class LearnException(Exception):
-    def __init__(self, correct_values=None):
-        self.connect_value = correct_values
+    def __init__(self, correct_value=None, translation=None):
+        self.connect_value = correct_value
+        self.translation = translation
 
 
 class LearnAPI(MethodView):
@@ -39,9 +40,7 @@ class LearnAPI(MethodView):
                     'word': item[1],
                     'type_name': item[2],
                     'transcription': item[3],
-                    'translations': [
-                        tr for (tr, ) in self._get_db_translation(item[0], current_user.id_language)
-                    ]
+                    'translations': self._get_db_translation(item[0], current_user.id_language)
                 } for item in words_to_repeat
             ],
             'learn': [
@@ -50,9 +49,7 @@ class LearnAPI(MethodView):
                     'word': item[1],
                     'type_name': item[2],
                     'transcription': item[3],
-                    'translations': [
-                        tr for (tr,) in self._get_db_translation(item[0], current_user.id_language)
-                    ]
+                    'translations': self._get_db_translation(item[0], current_user.id_language)
                 } for item in words_to_learn
             ]
         })
@@ -90,6 +87,7 @@ class LearnAPI(MethodView):
                 if direction == TranslationDirection.ORIGINAL:
                     self._process_original_direction_answer_or_raise_exception(
                         db_word,
+                        current_user.id_language,
                         answer
                     )
                 elif direction == TranslationDirection.USER_LANGUAGE:
@@ -103,6 +101,7 @@ class LearnAPI(MethodView):
             except LearnException as e:
                 result_mistakes.append({
                     'answer': answer,
+                    'translation': e.translation,
                     'correct': e.connect_value
                 })
 
@@ -159,7 +158,7 @@ class LearnAPI(MethodView):
             DbTranslation.is_in_use == True
         ).all()
 
-        return db_translations
+        return [tr for (tr, ) in db_translations]
 
     def _get_db_words_to_repeat(self, user_id):
         now = datetime.datetime.utcnow()
@@ -186,9 +185,10 @@ class LearnAPI(MethodView):
 
         return db_words
 
-    def _process_original_direction_answer_or_raise_exception(self, db_word, answer):
+    def _process_original_direction_answer_or_raise_exception(self, db_word, id_lang, answer):
         if db_word.word != answer:
-            raise LearnException(db_word.word)
+            db_translation = self._get_db_translation(db_word.id_word, id_lang)
+            raise LearnException(db_word.word, db_translation)
 
         db_word.score += 1
         if db_word.score >= self.words_learned_score:
@@ -198,18 +198,12 @@ class LearnAPI(MethodView):
             self._update_repeat_table(db_word)
 
     def _process_user_language_direction_answer_or_raise_exception(self, db_word, id_lang, answer):
-        db_translations = db.session.query(
-            DbTranslation.translation
-        ).filter(
-            DbTranslation.id_word == db_word.id_word,
-            DbTranslation.id_language == id_lang,
-            DbTranslation.is_in_use == True
-        ).all()
+        db_translations = self._get_db_translation(db_word.id_word, id_lang)
 
-        is_correct_answer = any([tr for (tr, ) in db_translations if tr == answer])
+        is_correct_answer = any([tr for tr in db_translations if tr == answer])
 
         if not is_correct_answer:
-            raise LearnException([tr for (tr, ) in db_translations])
+            raise LearnException(db_translations, db_word.word)
 
         db_word.score += 1
         if db_word.score >= self.words_learned_score:
