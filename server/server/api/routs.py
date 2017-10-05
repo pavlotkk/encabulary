@@ -5,6 +5,7 @@ from server.api.auth.logout import LogoutAPI
 from server.api.dictionary.words import WordAPI
 from server.api.dictionary.translations import TranslationsAPI
 from server.api.dictionary.learn import LearnAPI
+from server.api.dictionary.words_datatable import WordsDataTableAPI
 
 api_blueprint = Blueprint('api_blueprint', __name__)
 api_blueprint.add_url_rule('/api/login', view_func=LoginAPI.as_view('login'), methods=['POST'])
@@ -21,3 +22,6 @@ api_blueprint.add_url_rule('/api/translation/<int:id_translation>', view_func=tr
 
 learn_api_view = LearnAPI.as_view('learn')
 api_blueprint.add_url_rule('/api/learn', view_func=learn_api_view, methods=['GET', 'POST'])
+
+api_blueprint.add_url_rule('/api/words/jqdatatable', view_func=WordsDataTableAPI.as_view('words_jqdatatable'),
+                           methods=['POST'])

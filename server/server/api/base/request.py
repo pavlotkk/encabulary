@@ -89,6 +89,19 @@ class JsonRequestDecorator(BaseRequestDecorator):
         self.json_request = None
 
 
+class JQueryDataTableRequestDecorator(FormRequestDecorator):
+    def __init__(self, http_request):
+        super().__init__(http_request)
+
+        self.draw = self.get_string('draw')
+        self.skip = self.get_int('start')
+        self.limit = self.get_int('length')
+        self.order_column = self.get_string('order[0][column]')
+        self.order_by = self.get_string('columns[{}][data]'.format(self.order_column))
+        self.order_dir = self.get_string('order[0][dir]') or 'asc'
+        self.filter_by = self.get_string('search[value]')
+
+
 class RequestDecoratorFactory:
     @staticmethod
     def get_request(http_request):
@@ -102,6 +115,9 @@ class RequestDecoratorFactory:
         if 'Content-Type' in http_request.headers:
             if 'application/json' in http_request.headers['Content-Type']:
                 return JsonRequestDecorator(http_request)
+
+        if 'jqdatatable' in http_request.url:
+            return JQueryDataTableRequestDecorator(request)
 
         return FormRequestDecorator(http_request)
 

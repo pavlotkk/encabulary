@@ -14,6 +14,11 @@ class JsonResponse:
     def __init__(self):
         self.error = None
         self.data = {}
+        self._response = {
+            'error': None,
+            'data': None,
+            'ver': __version__
+        }
 
     def jsonify(self):
         """
@@ -23,13 +28,33 @@ class JsonResponse:
         :rtype: str
         """
 
-        response = {
-            'error': self.error,
-            'data': self.data,
-            'ver': __version__
-        }
+        self._flush()
 
-        return jsonify(**response)
+        return jsonify(**self._response)
+
+    def _flush(self):
+        self._response['error'] = self.error
+        self._response['data'] = self.data
+
+
+class JQueryDataTableResponse(JsonResponse):
+    def __init__(self):
+        super().__init__()
+
+        self.length = 0
+        self.draw = 0
+        self.filtered = 0
+
+        self._response['draw'] = 0
+        self._response['recordsFiltered'] = 0
+        self._response['recordsTotal'] = 0
+
+    def _flush(self):
+        super()._flush()
+
+        self._response['draw'] = self.draw
+        self._response['recordsFiltered'] = self.filtered
+        self._response['recordsTotal'] = self.length
 
 
 def ok_response(data=None):
@@ -37,6 +62,32 @@ def ok_response(data=None):
     response.ok = True
     response.data = data
 
+    return _jsonify(response)
+
+
+def ok_jqdatatable_response(draw, filtered, length, data=None):
+    response = JQueryDataTableResponse()
+    response.ok = True
+    response.data = data
+    response.draw = draw
+    response.filtered = filtered
+    response.length = length
+
+    return _jsonify(response)
+
+
+def bad_response(error, http_code=200):
+    response = JsonResponse()
+    response.error = error
+
+    return response.jsonify(), http_code
+
+
+def un_authorized_response():
+    return bad_response('Unauthorized', 401)
+
+
+def _jsonify(response):
     token = get_current_request_token()
     if token is None:
         return response.jsonify()
@@ -54,14 +105,3 @@ def ok_response(data=None):
     )
 
     return response
-
-
-def bad_response(error, http_code=200):
-    response = JsonResponse()
-    response.error = error
-
-    return response.jsonify(), http_code
-
-
-def un_authorized_response():
-    return bad_response('Unauthorized', 401)

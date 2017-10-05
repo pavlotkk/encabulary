@@ -1,5 +1,29 @@
 var wordsDataTable = null;
 
+function toString(obj){
+    if(Array.isArray(obj)){
+        var length = obj.length;
+        if(length == 1){
+            return obj[0];
+        }
+
+        var template_parts = [];
+        for(var i=0; i < length; i++){
+            template_parts.push((i + 1) + '. ' + obj[i]);
+        }
+        return template_parts.join("<br/>")
+    }
+    return obj;
+}
+
+function splitDateTime(strDateTime){
+    if(strDateTime){
+        return strDateTime.replace(' ', '<br/>')
+    }
+
+    return null;
+}
+
 function addWord(data, callback) {
     $.ajax({
         url: "/api/words/add",
@@ -178,9 +202,9 @@ function initDataTable() {
         processing: true,
         serverSide: true,
         destroy: true,
-        order: [[9, "desc"]],
+        order: [[6, "desc"]],
         ajax: {
-            url: '/api/words/get/datatable',
+            url: '/api/words/jqdatatable',
             type: 'POST',
             error: function (jqXHR, textStatus, errorThrown) {
                 // is request aborted
@@ -188,17 +212,19 @@ function initDataTable() {
                     return;
                 }
 
+                if(jqXHR.status == 401){
+                    document.location.href = "/index";
+                    return;
+                }
+
                 showError(jqXHR.status + " " + jqXHR.statusText);
             },
             dataSrc: function (data) {
-                if(data.ok === false){
-                    if(data.error.code.indexOf("EAUTH") != -1){
-                        document.location.href = "/index";
-                        return;
-                    }
+                if(data.error){
+                    showError(data.error);
                 }
-
-                return data.data;
+                showError(null);
+                return data.data.table;
             }
         },
         columns: [
@@ -209,12 +235,18 @@ function initDataTable() {
                     return full.id_word;
                 }
             },
-            {data: "en_word"},
-            {data: "en_transcription"},
-            {data: "en_pos"},
-            {data: "ru_word"},
+            {data: "word"},
+            {data: "transcription"},
+            {data: "type_name"},
             {
-                data: "learn_score",
+                data: "translations",
+                orderable: false,
+                render: function (data, type, full, meta) {
+                    return toString(full.translations);
+                }
+            },
+            {
+                data: "score",
                 render: function (data, type, full, meta) {
                     if (full.learn_score < 3) {
                         return full.learn_score;
@@ -226,20 +258,23 @@ function initDataTable() {
                 }
             },
             {
-                data: "success",
-                render: function (data, type, full) {
-                    return '<span class="text-success glyphicon glyphicon-arrow-up">' + full.success + '</span>'
+                data: "add_db_dts",
+                render: function (data, type, full, meta) {
+                    return splitDateTime(full.add_db_dts);
                 }
             },
             {
-                data: "errors",
-                render: function (data, type, full) {
-                    return '<span class="text-danger glyphicon glyphicon-arrow-down">' + full.errors + '</span>'
+                data: "last_learn_db_dts",
+                render: function (data, type, full, meta) {
+                    return splitDateTime(full.last_learn_db_dts);
                 }
             },
-            {data: "last_learn_dbdts"},
-            {data: "add_dbdts"},
-            {data: "repeat_dbdts"},
+            {
+                data: "repeat_db_dts",
+                render: function (data, type, full, meta) {
+                    return splitDateTime(full.repeat_db_dts);
+                }
+            },
             {
                 data: null,
                 orderable: false,
