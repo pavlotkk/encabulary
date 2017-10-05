@@ -1,4 +1,5 @@
 import datetime
+import random
 
 from flask import current_app
 from flask.views import MethodView
@@ -32,6 +33,9 @@ class LearnAPI(MethodView):
 
         words_to_learn = self._get_db_words_to_learn(current_user.id_user)
         words_to_repeat = self._get_db_words_to_repeat(current_user.id_user)
+
+        random.shuffle(words_to_learn)
+        random.shuffle(words_to_repeat)
 
         return ok_response({
             'repeat': [
