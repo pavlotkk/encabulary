@@ -74,10 +74,12 @@ function toString(obj){
         }
 
         var template_parts = [];
+        template_parts.push('<ol class="ol-row">');
         for(var i=0; i < length; i++){
-            template_parts.push((i + 1) + '. ' + obj[i]);
+            template_parts.push('<li>' + obj[i] + '</li>');
         }
-        return template_parts.join("<br/>")
+        template_parts.push('</ol>');
+        return template_parts.join("")
     }
     return obj;
 }

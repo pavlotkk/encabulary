@@ -26,3 +26,7 @@ table > thead > tr > th {
 #result table > thead > tr > th {
     border-bottom: 2px solid #000;
 }
+
+ol.ol-row {
+    margin-bottom: 0px;
+}
