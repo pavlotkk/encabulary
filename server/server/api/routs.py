@@ -20,4 +20,4 @@ api_blueprint.add_url_rule('/api/translation/<int:id_translation>', view_func=tr
                            methods=['GET', 'PUT', 'DELETE'])
 
 learn_api_view = LearnAPI.as_view('learn')
-api_blueprint.add_url_rule('/api/learn', view_func=learn_api_view, methods=['GET'])
+api_blueprint.add_url_rule('/api/learn', view_func=learn_api_view, methods=['GET', 'POST'])
