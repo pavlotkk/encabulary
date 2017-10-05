@@ -9,7 +9,7 @@ class DbWord(db.Model):
 
     id_word = db.Column(db.Integer, primary_key=True, unique=True, index=True, autoincrement=True)
     id_user = db.Column(db.Integer, db.ForeignKey(DbUser.id_user), index=True, nullable=False)
-    id_word_type = db.Column(db.Integer, db.ForeignKey(DbWordType.id_type), nullable=False)
+    id_word_type = db.Column(db.Integer, db.ForeignKey(DbWordType.id_type), nullable=True)
 
     word = db.Column(db.Text, nullable=False, index=True)
     transcription = db.Column(db.Text, nullable=True)

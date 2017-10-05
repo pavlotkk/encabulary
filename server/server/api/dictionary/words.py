@@ -64,11 +64,15 @@ class WordAPI(MethodView):
         except ObjectDoesNotExists as e:
             return bad_response(str(e))
 
-        db_word_types = db.session.query(DbWordType).all()
+        word_type_name = db.session.query(
+            DbWordType.name
+        ).filter(
+            DbWordType.id_type == db_word.id_word_type
+        ).scalar()
 
         db_word_to_dict = {
             'id_word': db_word.id_word,
-            'id_type': [item for item in db_word_types if item.id_type == db_word.id_word_type][0].name,
+            'type_name': word_type_name,
             'word': db_word.word,
             'transcription': db_word.transcription,
             'score': db_word.score,

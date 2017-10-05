@@ -52,20 +52,15 @@ def init_db_with_default_values():
 
 
 def add_db_words(db_user):
-    words_fixtures_path = os.path.join(get_root_dir(), 'fixtures', 'user_init_words.csv')
+    words_fixtures_path = os.path.join(get_root_dir(), 'fixtures', 'demo_words.csv')
     for line in csv_reader.lines(words_fixtures_path, delimiter=','):
-        db_word = DbWord(db_user.id_user, line['en'], line['transcription'])
+        db_word = DbWord(db_user.id_user, line['en'], DbWordType.get_id_by_name(line['id_type']), line['transcription'])
         db_word.add_db_dts = dates.from_iso(line['add_dts'])
         db.session.add(db_word)
         db.session.flush()
 
         for tr in line['ru'].split(';'):
-            db_translation = DbTranslation(
-                db_word.id_word,
-                DbLanguage.RU,
-                DbWordType.get_id_by_name(line['id_type']),
-                tr
-            )
+            db_translation = DbTranslation(db_word.id_word, db_user.id_language, tr)
 
             db.session.add(db_translation)
 
