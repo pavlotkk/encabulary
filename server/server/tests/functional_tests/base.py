@@ -32,7 +32,6 @@ class BaseTestCase(unittest.TestCase):
             db.session.add(test_user)
             db_manager.save_db_changes()
 
-            db_manager.add_db_words(test_user)
             self.test_user_id = test_user.id_user
 
             db.session.remove()

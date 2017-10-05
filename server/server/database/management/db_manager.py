@@ -49,10 +49,6 @@ def init_db_with_default_values():
 
     save_db_changes()
 
-    all_users = db.session.query(DbUser).all()
-    for user in all_users:
-        add_db_words(user)
-
 
 def add_db_words(db_user):
     words_fixtures_path = os.path.join(get_root_dir(), 'fixtures', 'user_init_words.csv')
