@@ -23,7 +23,7 @@ class Jwt:
         """
 
         if http_request is None:
-            raise ValueError("Http request can not be None")
+            raise ValueError('Http request can not be None')
 
         encoded_access_token = Jwt.get_encoded_token(http_request)
         access_token = Jwt.decode(encoded_access_token)

@@ -24,9 +24,9 @@ class JsonResponse:
         """
 
         response = {
-            "error": self.error,
-            "data": self.data,
-            "ver": __version__
+            'error': self.error,
+            'data': self.data,
+            'ver': __version__
         }
 
         return jsonify(**response)
@@ -44,13 +44,13 @@ def ok_response(data=None):
     if not token.need_refresh:
         return response.jsonify()
 
-    response.data["refresh_token"] = Jwt.generate(token.user_id, token.session_id)
+    response.data['refresh_token'] = Jwt.generate(token.user_id, token.session_id)
 
     response = response.jsonify()
     response.set_cookie(
         'access_token',
-        value=str(response.data["refresh_token"]['access_token']),
-        expires=dates.from_iso(response.data["refresh_token"]['exp'])
+        value=str(response.data['refresh_token']['access_token']),
+        expires=dates.from_iso(response.data['refresh_token']['exp'])
     )
 
     return response

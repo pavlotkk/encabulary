@@ -34,17 +34,17 @@ def init_db_with_default_values():
     db.session.add_all(db_repeats)
 
     db_word_types = [
-        DbWordType("noun"),
-        DbWordType("verb"),
-        DbWordType("adjective"),
-        DbWordType("adverb"),
-        DbWordType("preposition"),
-        DbWordType("phrasal verb")
+        DbWordType('noun'),
+        DbWordType('verb'),
+        DbWordType('adjective'),
+        DbWordType('adverb'),
+        DbWordType('preposition'),
+        DbWordType('phrasal verb')
     ]
     db.session.add_all(db_word_types)
 
     db_users = [
-        DbUser("demo", DbLanguage.RU, "demo")
+        DbUser('demo', DbLanguage.RU, 'demo')
     ]
     db.session.add_all(db_users)
 

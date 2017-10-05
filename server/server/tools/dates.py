@@ -1,6 +1,6 @@
-ISO_8601_DATE_FORMAT = "%Y-%m-%d"
-ISO_8601_TIME_FORMAT = "%H:%M:%S"
-ISO_8601_DATETIME_FORMAT = "%Y-%m-%d %H:%M:%S"
+ISO_8601_DATE_FORMAT = '%Y-%m-%d'
+ISO_8601_TIME_FORMAT = '%H:%M:%S'
+ISO_8601_DATETIME_FORMAT = '%Y-%m-%d %H:%M:%S'
 
 
 def to_iso_datetime_string(value):

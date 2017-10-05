@@ -46,7 +46,7 @@ class FormRequestDecorator(BaseRequestDecorator):
     def get_value(self, field):
         """:rtype: str"""
 
-        if self.http_request.method == "GET":
+        if self.http_request.method == 'GET':
             value = self.http_request.args.get(field)
         else:
             value = self.http_request.form.get(field)
@@ -99,8 +99,8 @@ class RequestDecoratorFactory:
         if http_request is None:
             return BaseRequestDecorator(None)
 
-        if "Content-Type" in http_request.headers:
-            if "application/json" in http_request.headers['Content-Type']:
+        if 'Content-Type' in http_request.headers:
+            if 'application/json' in http_request.headers['Content-Type']:
                 return JsonRequestDecorator(http_request)
 
         return FormRequestDecorator(http_request)

@@ -68,13 +68,13 @@ class BaseTestCase(unittest.TestCase):
         return self.get_json_response(
             '/api/login',
             dict(
-                email="test",
-                password="test"
+                email='test',
+                password='test'
             )
         )
 
     def print_json(self, json_dict, message=None):
-        print("{}\n{}\n---------------\n".format(message, json.dumps(json_dict, indent=3, sort_keys=True, ensure_ascii=False)))
+        print('{}\n{}\n---------------\n'.format(message, json.dumps(json_dict, indent=3, sort_keys=True, ensure_ascii=False)))
 
 
 class BaseAuthTestCase(BaseTestCase):

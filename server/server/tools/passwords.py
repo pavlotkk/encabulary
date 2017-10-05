@@ -27,7 +27,7 @@ def verify_password(password, hashed_password, salt):
 def generate_password(pwd_length, symbols=string.ascii_letters + string.digits + string.digits):
     from Crypto.Random.random import StrongRandom
 
-    ret = ""
+    ret = ''
     rnd = StrongRandom()
     for i in range(pwd_length):
         ret += rnd.choice(symbols)
