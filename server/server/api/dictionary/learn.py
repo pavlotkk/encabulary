@@ -1,5 +1,6 @@
 import datetime
 import random
+from difflib import SequenceMatcher
 
 from flask import current_app
 from flask.views import MethodView
@@ -206,7 +207,10 @@ class LearnAPI(MethodView):
     def _process_user_language_direction_answer_or_raise_exception(self, db_word, id_lang, answer):
         db_translations = self._get_db_translation(db_word.id_word, id_lang)
 
-        is_correct_answer = any([tr for tr in db_translations if tr == answer])
+        def similar(a, b):
+            return SequenceMatcher(None, a, b).ratio()
+
+        is_correct_answer = any([tr for tr in db_translations if similar(tr, answer) >= self.words_learned_score])
 
         if not is_correct_answer:
             raise LearnException(db_translations, db_word.word)
