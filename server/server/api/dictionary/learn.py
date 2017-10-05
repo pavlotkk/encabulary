@@ -83,6 +83,8 @@ class LearnAPI(MethodView):
             if db_word is None:
                 continue
 
+            db_word.last_learn_db_dts = datetime.datetime.utcnow()
+
             try:
                 if direction == TranslationDirection.ORIGINAL:
                     self._process_original_direction_answer_or_raise_exception(
