@@ -37,6 +37,7 @@ class LearnAPI(MethodView):
                 {
                     'id_word': item[0],
                     'word': item[1],
+                    'transcription': item[2],
                     'translations': [
                         {
                             'translation': tr,
@@ -49,6 +50,7 @@ class LearnAPI(MethodView):
                 {
                     'id_word': item[0],
                     'word': item[1],
+                    'transcription': item[2],
                     'translations': [
                         {
                             'translation': tr,
@@ -134,7 +136,8 @@ class LearnAPI(MethodView):
     def _get_db_words_to_learn(self, user_id):
         db_words = db.session.query(
             DbWord.id_word,
-            DbWord.word
+            DbWord.word,
+            DbWord.transcription
         ).filter(
             DbWord.id_user == user_id,
             DbWord.is_in_use == True,
@@ -167,7 +170,8 @@ class LearnAPI(MethodView):
 
         db_words = db.session.query(
             DbWord.id_word,
-            DbWord.word
+            DbWord.word,
+            DbWord.transcription
         ).join(
             DbUserWordRepeat,
             DbUserWordRepeat.id_word == DbWord.id_word
