@@ -3,47 +3,45 @@
 
 var LEARN_REPEATS = 3;
 var REPEAT_LEARN_REPEATS = 1;
-var answers = [];
+var answers = {};
+var ORIGINAL_DIRECTION = 'original';
+var USER_LANGUAGE_DIRECTION = 'user_language';
 
 // server
 
 function getServerWords(callback) {
     $.ajax({
-        url: "/api/words/get",
+        url: "/api/learn",
         contentType: "application/json",
         dataType: "json",
-        method: "POST",
+        method: "GET",
         error: function(jqXHR, textStatus, errorThrown){
+            if(jqXHR.status == 401){
+                document.location.href = "/index";
+                return;
+            }
             callback.error(textStatus);
         },
         success: function (data) {
-            if (!data.ok) {
-                if (data.error.code.indexOf("EAUTH") != -1) {
-                    document.location.href = "/index";
-                    return;
-                }
-            }
             callback.success(data);
         }
     })
 }
 function rememberWords(ans, callback) {
     $.ajax({
-        url: "/api/words/remember",
+        url: "/api/learn",
         contentType: "application/json",
         dataType: "json",
-        data: JSON.stringify({"answers": ans}),
+        data: JSON.stringify(ans),
         method: "POST",
         error: function(jqXHR, textStatus, errorThrown){
+            if(jqXHR.status == 401){
+                document.location.href = "/index";
+                return;
+            }
             callback.error(textStatus);
         },
         success: function (data) {
-            if(!data.ok){
-                if(data.error.code.indexOf("EAUTH") != -1){
-                    document.location.href = "/index";
-                    return;
-                }
-            }
             callback.success(data);
         }
     })
@@ -68,6 +66,22 @@ function showWords(show) {
 
 // business
 
+function toString(obj){
+    if(Array.isArray(obj)){
+        var length = obj.length;
+        if(length == 1){
+            return obj[0];
+        }
+
+        var template_parts = [];
+        for(var i=0; i < length; i++){
+            template_parts.push((i + 1) + '. ' + obj[i]);
+        }
+        return template_parts.join("<br/>")
+    }
+    return obj;
+}
+
 function renderRepeatWords(words) {
 
     if(words.length == 0){
@@ -79,19 +93,19 @@ function renderRepeatWords(words) {
         var en_ru_template = [];
         for(var i = 0; i < words.length; i++){
             var word = words[i];
-            en_ru_template.push('<div data-type="en_ru" data-id="' + word.id + '">');
+            en_ru_template.push('<div data-type="user_language" data-id="' + word.id_word + '">');
             en_ru_template.push('<p class="repeat">Repeat</p>');
             en_ru_template.push('<h1 id="word-header" class="display-3">');
-            en_ru_template.push(word.en_word);
+            en_ru_template.push(word.word);
             en_ru_template.push('</h1>');
-            if(word.en_transcription){
+            if(word.transcription){
                 en_ru_template.push('<p id="word-transcription" class="lead">[');
-                en_ru_template.push(word.en_transcription);
+                en_ru_template.push(toString(word.transcription));
                 en_ru_template.push(']</p>');
             }
-            if(word.en_pos){
+            if(word.type_name){
                 en_ru_template.push('<p id="word-pos" class="lead">');
-                en_ru_template.push(word.en_pos);
+                en_ru_template.push(word.type_name);
                 en_ru_template.push('</p>');
             }
             en_ru_template.push('<form id="form" autocomplete="off">');
@@ -116,10 +130,10 @@ function renderRepeatWords(words) {
         var ru_en_template = [];
         for(var i = 0; i < words.length; i++){
             var word = words[i];
-            ru_en_template.push('<div data-type="ru_en" data-id="' + word.id + '">');
+            ru_en_template.push('<div data-type="original" data-id="' + word.id_word + '">');
             en_ru_template.push('<p class="repeat">Repeat</p>');
             ru_en_template.push('<h1 id="word-header" class="display-3">');
-            ru_en_template.push(word.ru_word);
+            ru_en_template.push(toString(word.translations));
             ru_en_template.push('</h1>');
             ru_en_template.push('<form id="form" autocomplete="off">');
             ru_en_template.push('<p><input id="userInput" class="form-control form-control-lg" type="text"></p>');
@@ -161,18 +175,18 @@ function renderWords(words) {
         var en_ru_template = [];
         for(var i = 0; i < words.length; i++){
             var word = words[i];
-            en_ru_template.push('<div data-type="en_ru" data-id="' + word.id + '">');
+            en_ru_template.push('<div data-type="user_language" data-id="' + word.id_word + '">');
             en_ru_template.push('<h1 id="word-header" class="display-3">');
-            en_ru_template.push(word.en_word);
+            en_ru_template.push(word.word);
             en_ru_template.push('</h1>');
-            if(word.en_transcription){
+            if(word.transcription){
                 en_ru_template.push('<p id="word-transcription" class="lead">[');
-                en_ru_template.push(word.en_transcription);
+                en_ru_template.push(word.transcription);
                 en_ru_template.push(']</p>');
             }
-            if(word.en_pos){
+            if(word.type_name){
                 en_ru_template.push('<p id="word-pos" class="lead">');
-                en_ru_template.push(word.en_pos);
+                en_ru_template.push(word.type_name);
                 en_ru_template.push('</p>');
             }
             en_ru_template.push('<form id="form" autocomplete="off">');
@@ -196,9 +210,9 @@ function renderWords(words) {
         var ru_en_template = [];
         for(var i = 0; i < words.length; i++){
             var word = words[i];
-            ru_en_template.push('<div data-type="ru_en" data-id="' + word.id + '">');
+            ru_en_template.push('<div data-type="original" data-id="' + word.id_word + '">');
             ru_en_template.push('<h1 id="word-header" class="display-3">');
-            ru_en_template.push(word.ru_word);
+            ru_en_template.push(toString(word.translations));
             ru_en_template.push('</h1>');
             ru_en_template.push('<form id="form" autocomplete="off">');
             ru_en_template.push('<p><input id="userInput" class="form-control form-control-lg" type="text"></p>');
@@ -237,9 +251,9 @@ function showNextWordContainer() {
     container.show();
 
     var dataType = container.attr("data-type");
-    if(dataType == "en_ru"){
+    if(dataType == "user_language"){
         showEnRu(container);
-    } else if (dataType == "ru_en"){
+    } else if (dataType == "original"){
         showRuEn(container);
     } else if (dataType == "commit"){
         showCommit(container);
@@ -258,6 +272,7 @@ function showNextWordContainer() {
 function showEnRu(container) {
     var btnLearn = container.find("#btnLearn");
     var input = container.find('#userInput');
+
     container.find("#form").submit(function (e) {
         e.preventDefault();
 
@@ -268,7 +283,12 @@ function showEnRu(container) {
             return;
         }
 
-        answers.push({id: id, ru_word: value});
+        if(answers.direction == null){
+            answers.direction = USER_LANGUAGE_DIRECTION;
+            answers.answers = []
+        }
+
+        answers.answers.push({id_word: id, answer: value});
 
         container.remove();
         showNextWordContainer();
@@ -279,6 +299,7 @@ function showEnRu(container) {
 function showRuEn(container) {
     var btnLearn = container.find("#btnLearn");
     var input = container.find('#userInput');
+
     container.find("#form").submit(function (e) {
         e.preventDefault();
 
@@ -289,7 +310,12 @@ function showRuEn(container) {
             return;
         }
 
-        answers.push({id: id, en_word: value});
+        if(answers.direction == null){
+            answers.direction = ORIGINAL_DIRECTION;
+            answers.answers = []
+        }
+
+        answers.answers.push({id_word: id, answer: value});
 
         container.remove();
         showNextWordContainer();
@@ -303,7 +329,7 @@ function showCommit(container) {
         container.remove();
         showNextWordContainer();
 
-        answers = [];
+        answers = {};
     });
 
     rememberWords(answers, {
@@ -312,15 +338,15 @@ function showCommit(container) {
             container.find('#next').show();
         },
         success: function (data) {
-            data = data.data;
+            data = data.data.result;
 
             var table_template = [];
             table_template.push('<button type="button" class="btn btn-success">');
-            table_template.push(data.correct);
+            table_template.push(data.ok_count);
             table_template.push('</button>');
 
             table_template.push('<button type="button" class="btn btn-danger">');
-            table_template.push(data.mistakes.length);
+            table_template.push(data.mistakes_count);
             table_template.push('</button>');
 
             if(data.mistakes.length > 0){
@@ -335,9 +361,9 @@ function showCommit(container) {
                 table_template.push('<tbody>');
                 for(var i = 0; i < data.mistakes.length; i++){
                     table_template.push('<tr>');
-                    table_template.push('<td>' + data.mistakes[i].correct + '</td>');
-                    table_template.push('<td>' + data.mistakes[i].translate + '</td>');
-                    table_template.push('<td>' + data.mistakes[i].answer + '</td>');
+                    table_template.push('<td>' + toString(data.mistakes[i].correct) + '</td>');
+                    table_template.push('<td>' + toString(data.mistakes[i].translation) + '</td>');
+                    table_template.push('<td>' + toString(data.mistakes[i].answer) + '</td>');
                     table_template.push('</tr>');
                 }
                 table_template.push('</tbody>');
@@ -365,7 +391,7 @@ function showFinishRepeat(container) {
 }
 
 function start() {
-    answers = [];
+    answers = {};
 
     $("#wordsContainer").html("");
 
