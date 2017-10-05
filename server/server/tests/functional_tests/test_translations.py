@@ -9,26 +9,26 @@ class TranslationAddTestCase(BaseAuthTestCase):
 
         self.id_word = None
         with self.app.app_context():
-            db_word = DbWord(self.test_user_id, '__test__')
+            db_word = DbWord(self.test_user_id, '__test__', 1)
             db.session.add(db_word)
             db.session.commit()
 
             self.id_word = db_word.id_word
 
     def test_word_required(self):
-        response = self._add_translation({})
+        response = self._api_add_translation({})
 
         self.assertIsNotNone(response['error'])
 
     def test_translation_required(self):
-        response = self._add_translation({
+        response = self._api_add_translation({
             'id_word': self.id_word
         })
 
         self.assertIsNotNone(response['error'])
 
     def test_word_does_not_exists(self):
-        response = self._add_translation({
+        response = self._api_add_translation({
             'id_word': 0,
             'translation': '__translation__'
         })
@@ -36,7 +36,7 @@ class TranslationAddTestCase(BaseAuthTestCase):
         self.assertIsNotNone(response['error'])
 
     def test_success_add_translation(self):
-        response = self._add_translation({
+        response = self._api_add_translation({
             'id_word': self.id_word,
             'translation': '__translation__'
         })
@@ -50,7 +50,7 @@ class TranslationAddTestCase(BaseAuthTestCase):
             self.assertIsNotNone(db_tr)
             self.assertEqual(db_tr.translation, '__translation__')
 
-    def _add_translation(self, params):
+    def _api_add_translation(self, params):
         return self.get_json_response('/api/translation', method='POST', params=params)
 
 
@@ -60,11 +60,11 @@ class BaseTranslationTestCase(BaseAuthTestCase):
 
         self.id_translation = None
         with self.app.app_context():
-            db_word = DbWord(self.test_user_id, '__test__')
+            db_word = DbWord(self.test_user_id, '__test__', 1)
             db.session.add(db_word)
             db.session.flush()
 
-            db_tr = DbTranslation(db_word.id_word, DbLanguage.RU, 1, '__translation__')
+            db_tr = DbTranslation(db_word.id_word, DbLanguage.RU, '__translation__')
             db.session.add(db_tr)
 
             db.session.commit()

@@ -37,12 +37,10 @@ class LearnAPI(MethodView):
                 {
                     'id_word': item[0],
                     'word': item[1],
-                    'transcription': item[2],
+                    'type_name': item[2],
+                    'transcription': item[3],
                     'translations': [
-                        {
-                            'translation': tr,
-                            'type': id_type
-                        } for (tr, id_type) in self._get_db_translation(item[0], current_user.id_language)
+                        tr for (tr, ) in self._get_db_translation(item[0], current_user.id_language)
                     ]
                 } for item in words_to_repeat
             ],
@@ -50,12 +48,10 @@ class LearnAPI(MethodView):
                 {
                     'id_word': item[0],
                     'word': item[1],
-                    'transcription': item[2],
+                    'type_name': item[2],
+                    'transcription': item[3],
                     'translations': [
-                        {
-                            'translation': tr,
-                            'type': id_type
-                        } for (tr, id_type) in self._get_db_translation(item[0], current_user.id_language)
+                        tr for (tr,) in self._get_db_translation(item[0], current_user.id_language)
                     ]
                 } for item in words_to_learn
             ]
@@ -137,7 +133,11 @@ class LearnAPI(MethodView):
         db_words = db.session.query(
             DbWord.id_word,
             DbWord.word,
+            DbWordType.name,
             DbWord.transcription
+        ).join(
+            DbWordType,
+            DbWord.id_word_type == DbWordType.id_type
         ).filter(
             DbWord.id_user == user_id,
             DbWord.is_in_use == True,
@@ -152,11 +152,7 @@ class LearnAPI(MethodView):
 
     def _get_db_translation(self, id_word, id_lang):
         db_translations = db.session.query(
-            DbTranslation.translation,
-            DbWordType.name
-        ).outerjoin(
-            DbWordType,
-            DbTranslation.id_word_type == DbWordType.id_type
+            DbTranslation.translation
         ).filter(
             DbTranslation.id_word == id_word,
             DbTranslation.id_language == id_lang,
@@ -171,10 +167,14 @@ class LearnAPI(MethodView):
         db_words = db.session.query(
             DbWord.id_word,
             DbWord.word,
+            DbWordType.name,
             DbWord.transcription
         ).join(
             DbUserWordRepeat,
             DbUserWordRepeat.id_word == DbWord.id_word
+        ).join(
+            DbWordType,
+            DbWord.id_word_type == DbWordType.id_type
         ).filter(
             DbWord.id_user == user_id,
             DbWord.is_in_use == True,

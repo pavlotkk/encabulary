@@ -17,4 +17,4 @@ class TestGetWordsToLearn(BaseLearnTestCase):
         data_translations = data_learn['translations']
 
         for tr in self.db_translations:
-            self.assertTrue(any([item for item in data_translations if item['translation'] == tr]))
+            self.assertTrue(any([item for item in data_translations if item == tr]))

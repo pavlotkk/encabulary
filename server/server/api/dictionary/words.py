@@ -5,7 +5,7 @@ from server.api.base.request import get_current_user_id, get_current_request
 from server.api.base.response import bad_response, ok_response
 from server.database import db
 from server.database.management.db_manager import save_db_changes
-from server.database.model import DbWord, DbTranslation
+from server.database.model import DbWord, DbTranslation, DbWordType
 from server.decorators.access_token_required import access_token_required
 from server.tools import dates
 
@@ -19,12 +19,16 @@ class WordAPI(MethodView):
         user_id = get_current_user_id()
 
         word = request.get_string('word')
+        id_word_type = request.get_int('id_type')
         transcription = request.get_string('transcription')
 
         if not word:
             return bad_response('word is required')
 
-        db_word = self.add_word_to_db(user_id, word, transcription)
+        if not id_word_type:
+            return bad_response('id_type is required')
+
+        db_word = self._add_word_to_db(user_id, word, id_word_type, transcription)
 
         return ok_response({'id_word': db_word.id_word})
 
@@ -35,13 +39,17 @@ class WordAPI(MethodView):
         user_id = get_current_user_id()
 
         word = request.get_string('word')
+        id_word_type = request.get_int('id_type')
         transcription = request.get_string('transcription')
 
         if not word:
             return bad_response('word is required')
 
+        if not id_word_type:
+            return bad_response('id_type is required')
+
         try:
-            self.update_db_word_or_raise_exception(user_id, id_word, word, transcription)
+            self._update_db_word_or_raise_exception(user_id, id_word, word, id_word_type, transcription)
         except ObjectDoesNotExists as e:
             return bad_response(str(e))
 
@@ -52,12 +60,15 @@ class WordAPI(MethodView):
         user_id = get_current_user_id()
 
         try:
-            db_word = self.get_db_word_or_raise_exception(user_id, id_word)
+            db_word = self._get_db_word_or_raise_exception(user_id, id_word)
         except ObjectDoesNotExists as e:
             return bad_response(str(e))
 
+        db_word_types = db.session.query(DbWordType).all()
+
         db_word_to_dict = {
             'id_word': db_word.id_word,
+            'id_type': [item for item in db_word_types if item.id_type == db_word.id_word_type][0].name,
             'word': db_word.word,
             'transcription': db_word.transcription,
             'score': db_word.score,
@@ -75,25 +86,26 @@ class WordAPI(MethodView):
         user_id = get_current_user_id()
 
         try:
-            self.delete_cascade_db_word_or_raise_exception(user_id, id_word)
+            self._delete_cascade_db_word_or_raise_exception(user_id, id_word)
         except ObjectDoesNotExists as e:
             return bad_response(str(e))
 
         return ok_response()
 
-    def add_word_to_db(self, id_user, word, transcription=None):
+    def _add_word_to_db(self, id_user, word, id_word_type, transcription=None):
         db_word = db.session.query(
             DbWord
         ).filter(
             DbWord.id_user == id_user,
             DbWord.word == word,
+            DbWord.id_word_type == id_word_type,
             DbWord.is_in_use == True
         ).first()
 
         if db_word:
             return db_word
 
-        db_word = DbWord(id_user, word, transcription)
+        db_word = DbWord(id_user, word, id_word_type, transcription)
         db.session.add(db_word)
         db.session.flush()
 
@@ -101,7 +113,7 @@ class WordAPI(MethodView):
 
         return db_word
 
-    def get_db_word_or_raise_exception(self, id_user, id_word):
+    def _get_db_word_or_raise_exception(self, id_user, id_word):
         """
         :rtype: DbWord
         """
@@ -119,17 +131,18 @@ class WordAPI(MethodView):
 
         return db_word
 
-    def update_db_word_or_raise_exception(self, id_user, id_word, word, transcription=None):
-        db_word = self.get_db_word_or_raise_exception(id_user, id_word)
+    def _update_db_word_or_raise_exception(self, id_user, id_word, word, id_word_type, transcription=None):
+        db_word = self._get_db_word_or_raise_exception(id_user, id_word)
 
         db_word.word = word
         db_word.transcription = transcription
+        db_word.id_word_type = id_word_type
 
         save_db_changes()
 
-    def delete_cascade_db_word_or_raise_exception(self, id_user, id_word):
+    def _delete_cascade_db_word_or_raise_exception(self, id_user, id_word):
 
-        db_word = self.get_db_word_or_raise_exception(id_user, id_word)
+        db_word = self._get_db_word_or_raise_exception(id_user, id_word)
 
         db_word.is_in_use = False
 

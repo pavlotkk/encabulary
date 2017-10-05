@@ -14,13 +14,13 @@ class BaseLearnTestCase(BaseAuthTestCase):
         self.id_word = None
         self.db_translations = []
         with self.app.app_context():
-            db_word = DbWord(self.test_user_id, '__test__')
+            db_word = DbWord(self.test_user_id, '__test__', 1)
             db_word.score = 1
             db.session.add(db_word)
             db.session.flush()
 
-            db_tr_1 = DbTranslation(db_word.id_word, DbLanguage.RU, 1, '__translation_1__')
-            db_tr_2 = DbTranslation(db_word.id_word, DbLanguage.RU, 2, '__translation_2__')
+            db_tr_1 = DbTranslation(db_word.id_word, DbLanguage.RU, '__translation_1__')
+            db_tr_2 = DbTranslation(db_word.id_word, DbLanguage.RU, '__translation_2__')
             db.session.add(db_tr_1)
             db.session.add(db_tr_2)
             db.session.flush()

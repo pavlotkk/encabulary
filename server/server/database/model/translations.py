@@ -1,7 +1,7 @@
 import datetime
 
 from server.database import db
-from server.database.model import DbLanguage, DbWord, DbWordType
+from server.database.model import DbLanguage, DbWord
 
 
 class DbTranslation(db.Model):
@@ -10,7 +10,6 @@ class DbTranslation(db.Model):
     id_translation = db.Column(db.Integer, primary_key=True, unique=True, autoincrement=True)
     id_word = db.Column(db.Integer, db.ForeignKey(DbWord.id_word), nullable=False)
     id_language = db.Column(db.Integer, db.ForeignKey(DbLanguage.id_language), nullable=False)
-    id_word_type = db.Column(db.Integer, db.ForeignKey(DbWordType.id_type), nullable=True)
 
     translation = db.Column(db.Text, nullable=False, index=True)
 
@@ -18,10 +17,9 @@ class DbTranslation(db.Model):
 
     is_in_use = db.Column(db.Boolean, nullable=False, default=True)
 
-    def __init__(self, id_word=None, id_lang=None, id_word_type=None, translation=None):
+    def __init__(self, id_word=None, id_lang=None, translation=None):
         self.id_word = id_word
         self.id_language = id_lang
-        self.id_word_type = id_word_type
         self.translation = translation
 
     def __repr__(self):

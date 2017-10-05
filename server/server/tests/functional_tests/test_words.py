@@ -6,14 +6,17 @@ from server.database import db
 class TestAddWord(BaseAuthTestCase):
 
     def test_word_requirement(self):
-        response = self.add_word(params={})
-
+        response = self._api_add_word(params={})
         self.assertIsNotNone(response['error'])
-        self.assertEqual(response['error'], 'word is required')
+
+    def test_word_type_requirement(self):
+        response = self._api_add_word(params={'word': 'bla-bla-bla'})
+        self.assertIsNotNone(response['error'])
 
     def test_success_add_word(self):
-        response = self.add_word(params={
-            'word': 'hello'
+        response = self._api_add_word(params={
+            'word': 'hello',
+            'id_type': 1
         })
 
         self.assertIsNone(response['error'])
@@ -25,7 +28,7 @@ class TestAddWord(BaseAuthTestCase):
             db_word = db.session.query(DbWord).get(id_word)
             self.assertIsNotNone(db_word)
 
-    def add_word(self, params):
+    def _api_add_word(self, params):
         return self.get_json_response('/api/word', method='POST', params=params)
 
 
@@ -35,7 +38,7 @@ class BaseWordTestCase(BaseAuthTestCase):
 
         self.id_word = None
         with self.app.app_context():
-            db_word = DbWord(self.test_user_id, '__test__')
+            db_word = DbWord(self.test_user_id, '__test__', 1)
             db.session.add(db_word)
             db.session.commit()
 
@@ -45,18 +48,23 @@ class BaseWordTestCase(BaseAuthTestCase):
 class TestUpdateWord(BaseWordTestCase):
 
     def test_word_requirement(self):
-        response = self.update_word(self.id_word, {})
+        response = self._api_update_word(self.id_word, {})
+
+        self.assertIsNotNone(response['error'])
+
+    def test_word_type_requirement(self):
+        response = self._api_update_word(self.id_word, {'word': 'bla-bla'})
 
         self.assertIsNotNone(response['error'])
 
     def test_word_does_not_exists(self):
-        response = self.update_word(0, {'word': 'aaa'})
+        response = self._api_update_word(0, {'word': 'aaa', 'id_type': 1})
 
         self.assertIsNotNone(response['error'])
 
     def test_success_update_word(self):
         word = '__updated'
-        response = self.update_word(self.id_word, {'word': word})
+        response = self._api_update_word(self.id_word, {'word': word, 'id_type': 2})
 
         self.assertIsNone(response['error'])
 
@@ -64,38 +72,39 @@ class TestUpdateWord(BaseWordTestCase):
             db_word = db.session.query(DbWord).get(self.id_word)
             self.assertIsNotNone(db_word)
             self.assertEqual(db_word.word, word)
+            self.assertEqual(db_word.id_word_type, 2)
 
-    def update_word(self, id_word, params):
+    def _api_update_word(self, id_word, params):
         return self.get_json_response('/api/word/{}'.format(id_word), method='PUT', params=params)
 
 
 class TestGetWord(BaseWordTestCase):
 
     def test_word_does_not_exists(self):
-        response = self.get_word(0)
+        response = self._api_get_word(0)
 
         self.assertIsNotNone(response['error'])
 
     def test_success_get_word(self):
-        response = self.get_word(self.id_word)
+        response = self._api_get_word(self.id_word)
 
         self.assertIsNotNone(response['data']['word'])
 
-    def get_word(self, id_word):
+    def _api_get_word(self, id_word):
         return self.get_json_response('/api/word/{}'.format(id_word), method='GET')
 
 
 class TestDeleteWord(BaseWordTestCase):
 
     def test_word_does_not_exists(self):
-        response = self.delete_word(0)
+        response = self._api_delete_word(0)
 
         self.assertIsNotNone(response['error'])
 
     def test_success_delete_word(self):
-        response = self.delete_word(self.id_word)
+        response = self._api_delete_word(self.id_word)
 
         self.assertIsNone(response['error'])
 
-    def delete_word(self, id_word):
+    def _api_delete_word(self, id_word):
         return self.get_json_response('/api/word/{}'.format(id_word), method='DELETE')

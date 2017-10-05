@@ -18,7 +18,6 @@ class TranslationsAPI(MethodView):
         current_user = get_db_user_by_id(get_current_user_id())
 
         id_word = request.get_int('id_word')
-        id_word_type = request.get_int('id_word_type')
         translation = request.get_string('translation')
 
         if id_word is None:
@@ -31,7 +30,6 @@ class TranslationsAPI(MethodView):
             db_translation = self._add_db_translation_or_raise_exception(
                 current_user.id_user,
                 id_word,
-                id_word_type,
                 current_user.id_language,
                 translation
             )
@@ -52,7 +50,6 @@ class TranslationsAPI(MethodView):
         db_tr_to_dic = {
             'id_translation': db_tr.id_translation,
             'id_word': db_tr.id_word,
-            'id_word_type': db_tr.id_word,
             'id_lang': db_tr.id_language,
             'translation': db_tr.translation
         }
@@ -64,7 +61,6 @@ class TranslationsAPI(MethodView):
         request = get_current_request()
         current_user_id = get_current_user_id()
 
-        id_word_type = request.get_int('id_word_type')
         translation = request.get_string('translation')
 
         if not translation:
@@ -74,7 +70,6 @@ class TranslationsAPI(MethodView):
             self._update_db_translation_or_raise_exception(
                 id_translation,
                 current_user_id,
-                id_word_type,
                 translation
             )
         except ObjectDoesNotExists as e:
@@ -110,7 +105,7 @@ class TranslationsAPI(MethodView):
 
         return db_tr
 
-    def _add_db_translation_or_raise_exception(self, id_user, id_word, id_word_type, id_lang, translation):
+    def _add_db_translation_or_raise_exception(self, id_user, id_word, id_lang, translation):
         """:rtype: DbTranslation"""
         db_word_exists = db.session.query(
             db.session.query(
@@ -140,7 +135,6 @@ class TranslationsAPI(MethodView):
         db_translation = DbTranslation()
         db_translation.id_word = id_word
         db_translation.id_language = id_lang
-        db_translation.id_word_type = id_word_type
         db_translation.translation = translation
 
         db.session.add(db_translation)
@@ -148,10 +142,9 @@ class TranslationsAPI(MethodView):
 
         return db_translation
 
-    def _update_db_translation_or_raise_exception(self, id_translation, id_user, id_word_type, translation):
+    def _update_db_translation_or_raise_exception(self, id_translation, id_user, translation):
         db_translation = self._get_db_translation_or_raise_exception(id_translation, id_user)
 
-        db_translation.id_word_type = id_word_type
         db_translation.translation = translation
 
         save_db_changes()
