@@ -42,29 +42,75 @@ function addWord(data, callback) {
         },
         success: function (data) {
             if(data.error){
-                showError(data.error);
+                allback.error(data.error);
             }
             callback.success(data);
         }
     })
 }
 
-function editWord(data, callback) {
+function editWord(id_word, data, callback) {
     $.ajax({
-        url: "/api/words/edit",
+        url: "/api/word/" + id_word,
+        contentType: "application/json",
+        dataType: "json",
+        data: JSON.stringify(data),
+        method: "PUT",
+        error: function(jqXHR, textStatus, errorThrown){
+            if(jqXHR.status == 401){
+                document.location.href = "/index";
+                return;
+            }
+            callback.error(textStatus);
+        },
+        success: function (data) {
+            if(data.error){
+                callback.error(data.error);
+            }
+            callback.success(data);
+        }
+    })
+}
+
+function deleteTranslation(id_translation, callback) {
+    $.ajax({
+        url: "/api/translation/" + id_translation,
+        contentType: "application/json",
+        dataType: "json",
+        method: "DELETE",
+        error: function(jqXHR, textStatus, errorThrown){
+            if(jqXHR.status == 401){
+                document.location.href = "/index";
+                return;
+            }
+            callback.error(textStatus);
+        },
+        success: function (data) {
+            if(data.error){
+                callback.error(data.error);
+            }
+            callback.success(data);
+        }
+    })
+}
+
+function addTranslation(data, callback) {
+    $.ajax({
+        url: "/api/translation",
         contentType: "application/json",
         dataType: "json",
         data: JSON.stringify(data),
         method: "POST",
         error: function(jqXHR, textStatus, errorThrown){
+            if(jqXHR.status == 401){
+                document.location.href = "/index";
+                return;
+            }
             callback.error(textStatus);
         },
         success: function (data) {
-            if (!data.ok) {
-                if (data.error.code.indexOf("EAUTH") != -1) {
-                    document.location.href = "/index";
-                    return;
-                }
+            if(data.error){
+                callback.error(data.error);
             }
             callback.success(data);
         }
@@ -119,9 +165,9 @@ function resetAddForm() {
 function resetEditForm() {
     var modal = $("#editModal");
     modal.find("#inputIdWord").val(null);
-    modal.find("#inputEn").val(null);
     modal.find("#inputTranscription").val(null);
     modal.find("#inputRu").val(null);
+    modal.find("#inputEn").val(null);
     modal.find("#inputEn").focus();
 
     modal.find('#btnEdit').attr('disabled', null);
@@ -161,19 +207,17 @@ function initEditForm() {
     var modal = $("#editModal");
 
     modal.find('#btnEdit').click(function () {
+       var id_word = modal.find("#inputIdWord").val().trim();
        var data = {
-           id: modal.find("#inputIdWord").val().trim(),
-           ru: modal.find("#inputRu").val().trim(),
-           en: modal.find("#inputEn").val().trim(),
-           en_transcription: modal.find("#inputTranscription").val(),
-           en_pos: modal.find("#inputPos").val()
+           word: modal.find("#inputEn").val().trim(),
+           transcription: modal.find("#inputTranscription").val(),
+           id_type: modal.find("#inputPos").val()
        };
 
-        if(data.ru == ""){ return; }
-        if(data.en == ""){ return; }
+        if(data.word == ""){ return; }
 
         modal.find('#btnEdit').attr('disabled', 'disabled');
-        editWord(data, {
+        editWord(id_word, data, {
             error: function (errorText) {
                 modal.find('#btnEdit').attr('disabled', null);
                 showError(errorText);
@@ -190,10 +234,51 @@ function initEditForm() {
 function showEditForm(data) {
     var modal = $("#editModal");
     modal.find("#inputIdWord").val(data.id_word);
-    modal.find("#inputRu").val(data.ru_word);
-    modal.find("#inputEn").val(data.en_word);
-    modal.find("#inputTranscription").val(data.en_transcription);
-    modal.find("#inputPos").val(data.en_pos);
+    modal.find("#inputEn").val(data.word);
+    modal.find("#inputTranscription").val(data.transcription);
+    modal.find("#inputPos").val(data.id_type);
+
+    var $tr = modal.find("#inputRu");
+    $tr.tagsinput('removeAll');
+    for(var i=0; i<data.translations.length; i++){ $tr.tagsinput('add', data.translations[i].translation); }
+    $tr.tagsinput('refresh');
+
+    $tr.off('itemRemoved');
+    $tr.on('itemRemoved', function (event) {
+        var id_tr = 0;
+        for (var i=0; i<data.translations.length; i++){
+            if(data.translations[i].translation == event.item){
+                id_tr = data.translations[i].id;
+                break;
+            }
+        }
+        deleteTranslation(id_tr, {
+            error: function (errorText) {
+                showError(errorText);
+            },
+            success: function (data) {
+            }
+        });
+    });
+
+    $tr.off('itemAdded');
+    $tr.on('itemAdded', function (event) {
+        addTranslation({
+                id_word: modal.find("#inputIdWord").val().trim(),
+                translation: event.item
+            },
+            {
+                error: function (errorText) {
+                    showError(errorText);
+                },
+                success: function (resp) {
+                    data.translations.push({
+                        id: resp.data.id_translation,
+                        translation: event.item
+                    });
+                }
+            });
+    });
 
     modal.modal('show');
 }
@@ -240,12 +325,28 @@ function initDataTable() {
             },
             {data: "word"},
             {data: "transcription"},
+            {
+                data: "id_type",
+                orderable: false,
+                visible: false
+            },
             {data: "type_name"},
             {
                 data: "translations",
                 orderable: false,
                 render: function (data, type, full, meta) {
-                    return toString(full.translations);
+                    var length = full.translations.length;
+                    if (length == 1) {
+                        return full.translations[0].translation;
+                    }
+
+                    var template_parts = [];
+                    template_parts.push('<ol class="row-ol">');
+                    for (var i = 0; i < length; i++) {
+                        template_parts.push('<li>' + full.translations[i].translation + '</li>');
+                    }
+                    template_parts.push('</ol>');
+                    return template_parts.join("");
                 }
             },
             {

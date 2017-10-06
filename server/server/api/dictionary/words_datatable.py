@@ -26,7 +26,7 @@ class WordsDataTableAPI(MethodView):
 
         db_words = db.session.query(
             DbWord,
-            DbWordType.name,
+            DbWordType,
             DbUserWordRepeat.repeat_after_db_dts
         ).outerjoin(
             DbWordType,
@@ -74,14 +74,15 @@ class WordsDataTableAPI(MethodView):
         db_words = db_words.all()
 
         def map_func(word_data):
-            word, type_name, repeat_db_dts = word_data
+            word, word_type, repeat_db_dts = word_data
 
             return {
                 "id_word": word.id_word,
                 "word": word.word,
                 "transcription": word.transcription,
-                "type_name": type_name,
-                "translations": self._get_db_translation(word.id_word, current_user.id_language),
+                "id_type": None if word_type is None else word_type.id_type,
+                "type_name": None if word_type is None else word_type.name,
+                "translations": list(map(lambda i: {'id': i[0], 'translation': i[1]}, self._get_db_translation(word.id_word, current_user.id_language))),
                 "learn_score": word.score,
                 "add_db_dts": dates.to_iso_datetime_string(word.add_db_dts),
                 "last_learn_db_dts": dates.to_iso_datetime_string(word.last_learn_db_dts),
@@ -101,6 +102,7 @@ class WordsDataTableAPI(MethodView):
 
     def _get_db_translation(self, id_word, id_lang):
         db_translations = db.session.query(
+            DbTranslation.id_translation,
             DbTranslation.translation
         ).filter(
             DbTranslation.id_word == id_word,
@@ -108,4 +110,4 @@ class WordsDataTableAPI(MethodView):
             DbTranslation.is_in_use == True
         ).all()
 
-        return [tr for (tr, ) in db_translations]
+        return db_translations

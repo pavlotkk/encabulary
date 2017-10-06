@@ -109,9 +109,6 @@
                     <form method="POST">
                         <input type="hidden" id="inputIdWord">
                         <div class="form-group">
-                            <input id="inputRu" class="form-control" type="text" placeholder="Russian">
-                        </div>
-                        <div class="form-group">
                             <input id="inputEn" class="form-control" type="text" placeholder="English">
                         </div>
                         <div class="form-group">
@@ -123,6 +120,9 @@
                                     <option value="{{ item.id_type }}">{{ item.name }}</option>
                                 {% endfor %}
                             </select>
+                        </div>
+                        <div class="form-group">
+                            <input id="inputRu" class="form-control" type="text" data-role="tagsinput">
                         </div>
                     </form>
                 </div>
@@ -143,6 +143,7 @@
                 <th>ID</th>
                 <th>Word</th>
                 <th>Transcription</th>
+                <th>ID type</th>
                 <th>Type</th>
                 <th>Translate</th>
                 <th>Score</th>
