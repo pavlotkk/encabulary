@@ -27,6 +27,7 @@ class LearnAPI(MethodView):
     def __init__(self):
         self.max_words_count = current_app.config['MAX_WORDS_TO_LEARN_BY_REQUEST']
         self.words_learned_score = current_app.config['WORD_LEARNED_SCORE']
+        self.similar_ration = current_app.config['SIMILAR_RATIO']
 
     @access_token_required
     def get(self):
@@ -210,7 +211,7 @@ class LearnAPI(MethodView):
         def similar(a, b):
             return SequenceMatcher(None, a, b).ratio()
 
-        is_correct_answer = any([tr for tr in db_translations if similar(tr, answer) >= self.words_learned_score])
+        is_correct_answer = any([tr for tr in db_translations if similar(tr, answer) >= self.similar_ration])
 
         if not is_correct_answer:
             raise LearnException(db_translations, db_word.word)
