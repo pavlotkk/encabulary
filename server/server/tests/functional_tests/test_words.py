@@ -1,4 +1,4 @@
-from server.database.model import DbWord
+from server.database.model import DbWord, DbTranslation
 from server.tests.functional_tests.base import BaseAuthTestCase
 from server.database import db
 
@@ -27,6 +27,25 @@ class TestAddWord(BaseAuthTestCase):
         with self.app.app_context():
             db_word = db.session.query(DbWord).get(id_word)
             self.assertIsNotNone(db_word)
+
+    def test_success_add_word_with_translations(self):
+        response = self._api_add_word(params={
+            'word': 'hello',
+            'id_type': 1,
+            'translations': ['привет', 'здравствуй']
+        })
+
+        self.assertIsNone(response['error'])
+        self.assertIsNotNone(response['data']['id_word'])
+
+        id_word = response['data']['id_word']
+
+        with self.app.app_context():
+            db_word = db.session.query(DbWord).get(id_word)
+            self.assertIsNotNone(db_word)
+            db_translations = db.session.query(DbTranslation).filter(DbTranslation.id_word == id_word).all()
+            for tr in ['привет', 'здравствуй']:
+                self.assertTrue(any([i for i in db_translations if i.translation == tr]))
 
     def _api_add_word(self, params):
         return self.get_json_response('/api/word', method='POST', params=params)

@@ -28,20 +28,21 @@ function splitDateTime(strDateTime){
 
 function addWord(data, callback) {
     $.ajax({
-        url: "/api/words/add",
+        url: "/api/word",
         contentType: "application/json",
         dataType: "json",
         data: JSON.stringify(data),
         method: "POST",
         error: function(jqXHR, textStatus, errorThrown){
+            if(jqXHR.status == 401){
+                document.location.href = "/index";
+                return;
+            }
             callback.error(textStatus);
         },
         success: function (data) {
-            if(!data.ok){
-                if(data.error.code.indexOf("EAUTH") != -1){
-                    document.location.href = "/index";
-                    return;
-                }
+            if(data.error){
+                showError(data.error);
             }
             callback.success(data);
         }
@@ -104,10 +105,11 @@ function showError(error) {
 
 function resetAddForm() {
     var modal = $("#addModal");
-    modal.find("#inputEn").val(null);
     modal.find("#inputTranscription").val(null);
+    modal.find("#inputRu").tagsinput('removeAll');
     modal.find("#inputRu").val(null);
-    modal.find("#inputRu").focus();
+    modal.find("#inputEn").val(null);
+    modal.find("#inputEn").focus();
 
     modal.find('#btnAdd').attr('disabled', null);
 
@@ -120,7 +122,7 @@ function resetEditForm() {
     modal.find("#inputEn").val(null);
     modal.find("#inputTranscription").val(null);
     modal.find("#inputRu").val(null);
-    modal.find("#inputRu").focus();
+    modal.find("#inputEn").focus();
 
     modal.find('#btnEdit').attr('disabled', null);
 
@@ -132,14 +134,13 @@ function initAddForm() {
 
     modal.find('#btnAdd').click(function () {
        var data = {
-           ru: modal.find("#inputRu").val().trim(),
-           en: modal.find("#inputEn").val().trim(),
-           en_transcription: modal.find("#inputTranscription").val(),
-           en_pos: modal.find("#inputPos").val()
+           translations: modal.find("#inputRu").tagsinput('items'),
+           word: modal.find("#inputEn").val().trim(),
+           transcription: modal.find("#inputTranscription").val(),
+           id_type: modal.find("#inputPos").val()
        };
 
-        if(data.ru == ""){ return; }
-        if(data.en == ""){ return; }
+        if(data.word == ""){ return; }
 
         modal.find('#btnAdd').attr('disabled', 'disabled');
         addWord(data, {
@@ -308,7 +309,8 @@ $(function () {
     initDataTable();
 
     $('#addModal').on('shown.bs.modal', function () {
-        $('#addModal').find('#inputRu').focus();
+        $('#addModal').find('#inputEn').focus();
+        $('#addModal').find('#inputRu').tagsinput('refresh');
     });
 
     $('#addModal').on('hidden.bs.modal', function () {

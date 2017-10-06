@@ -25,6 +25,7 @@
     <link href="/static/css/bootstrap.min.css" rel="stylesheet">
     <link href="/static/css/jquery.dataTables.min.css" rel="stylesheet">
     <link href="/static/css/theme.css" rel="stylesheet">
+    <link href="/static/css/bootstrap-tagsinput.css" rel="stylesheet">
     <link href="/static/css/edit.css" rel="stylesheet">
 
 </head>
@@ -69,9 +70,6 @@
                 <div class="modal-body">
                     <form method="POST">
                         <div class="form-group">
-                            <input id="inputRu" class="form-control" type="text" placeholder="Russian">
-                        </div>
-                        <div class="form-group">
                             <input id="inputEn" class="form-control" type="text" placeholder="English">
                         </div>
                         <div class="form-group">
@@ -79,13 +77,13 @@
                         </div>
                         <div class="form-group" style="margin-top: 15px;">
                             <select id="inputPos" class="form-control">
-                                <option value="noun">Noun</option>
-                                <option value="verb">Verb</option>
-                                <option value="adj">Adjective</option>
-                                <option value="adverb">Adverb</option>
-                                <option value="phrasal verb">Phrasal verb</option>
-                                <option value="preposition">Preposition</option>
+                                {% for item in word_types %}
+                                    <option value="{{ item.id_type }}">{{ item.name }}</option>
+                                {% endfor %}
                             </select>
+                        </div>
+                        <div class="form-group">
+                            <input id="inputRu" data-role="tagsinput" class="form-control" type="text" placeholder="Translation">
                         </div>
                     </form>
                 </div>
@@ -121,12 +119,9 @@
                         </div>
                         <div class="form-group" style="margin-top: 15px;">
                             <select id="inputPos" class="form-control">
-                                <option value="noun">Noun</option>
-                                <option value="verb">Verb</option>
-                                <option value="adj">Adjective</option>
-                                <option value="adverb">Adverb</option>
-                                <option value="phrasal verb">Phrasal verb</option>
-                                <option value="preposition">Preposition</option>
+                                {% for item in word_types %}
+                                    <option value="{{ item.id_type }}">{{ item.name }}</option>
+                                {% endfor %}
                             </select>
                         </div>
                     </form>
@@ -176,6 +171,7 @@
 <script src="/static/js/jquery-3.2.1.min.js"></script>
 <script src="/static/js/bootstrap.min.js"></script>
 <script src="/static/js/jquery.dataTables.min.js"></script>
+<script src="/static/js/bootstrap-tagsinput.min.js"></script>
 <script src="/static/js/src/edit.js?v=2"></script>
 
 </body>
