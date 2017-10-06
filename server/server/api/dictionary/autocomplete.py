@@ -23,6 +23,9 @@ class AutoCompleteAPI(MethodView):
         translations = [item.translations for item in linguee_items if
                         DbWordType.get_id_by_name(item.word_type_name) == id_word_type]
 
+        if translations:
+            translations = translations[0]
+
         return ok_response({
             'word': {
                 'transcription': oxford_item.transcription,

@@ -42,7 +42,31 @@ function addWord(data, callback) {
         },
         success: function (data) {
             if(data.error){
-                allback.error(data.error);
+                callback.error(data.error);
+            }
+            callback.success(data);
+        }
+    })
+}
+
+function apiAutocomplete(word, word_type, callback) {
+    var url = "/api/autocomplete/" + word;
+    if(word_type != "" && word_type != 0){
+        url += "/" + word_type;
+    }
+    $.ajax({
+        url: url,
+        method: "GET",
+        error: function(jqXHR, textStatus, errorThrown){
+            if(jqXHR.status == 401){
+                document.location.href = "/index";
+                return;
+            }
+            callback.error(textStatus);
+        },
+        success: function (data) {
+            if(data.error){
+                callback.error(data.error);
             }
             callback.success(data);
         }
@@ -154,6 +178,7 @@ function resetAddForm() {
     modal.find("#inputTranscription").val(null);
     modal.find("#inputRu").tagsinput('removeAll');
     modal.find("#inputRu").val(null);
+    modal.find("#inputPos").val("");
     modal.find("#inputEn").val(null);
     modal.find("#inputEn").focus();
 
@@ -199,7 +224,27 @@ function initAddForm() {
                 resetAddForm();
             }
         });
+    });
 
+    modal.find('#btnAutocomplete').click(function () {
+        var word = modal.find("#inputEn").val().trim(),
+            word_type_id = modal.find("#inputPos").val();
+
+        if(word == ""){ return; }
+
+        apiAutocomplete(word, word_type_id, {
+            error: function (errorText) {},
+            success: function (data) {
+                var word = data.data.word;
+                modal.find("#inputPos").val(word.id_word_type);
+                modal.find("#inputTranscription").val(word.transcription);
+
+                var $tr = modal.find("#inputRu");
+                $tr.tagsinput('removeAll');
+                for(var i=0; i<word.translations.length; i++){ $tr.tagsinput('add', word.translations[i]); }
+                $tr.tagsinput('refresh');
+            }
+        });
     });
 }
 
