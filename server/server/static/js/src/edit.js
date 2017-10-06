@@ -117,22 +117,22 @@ function addTranslation(data, callback) {
     })
 }
 
-function deleteWord(data, callback) {
+function deleteWord(id_word, callback) {
     $.ajax({
-        url: "/api/words/delete",
+        url: "/api/word/" + id_word,
         contentType: "application/json",
         dataType: "json",
-        data: JSON.stringify(data),
-        method: "POST",
-        error: function(jqXHR, textStatus, errorThrown){
+        method: "DELETE",
+        error: function (jqXHR, textStatus, errorThrown) {
+            if (jqXHR.status == 401) {
+                document.location.href = "/index";
+                return;
+            }
             callback.error(textStatus);
         },
         success: function (data) {
-            if (!data.ok) {
-                if (data.error.code.indexOf("EAUTH") != -1) {
-                    document.location.href = "/index";
-                    return;
-                }
+            if(data.error){
+                callback.error(data.error);
             }
 
             callback.success(data);
@@ -434,11 +434,11 @@ $(function () {
     $("#dtContainer").on('click', '.btn-del', function () {
         var deleteRow = wordsDataTable.row($(this).closest('tr')[0]).data();
 
-        if(!confirm("Delete [" + deleteRow.id_word + "] '" + deleteRow.en_word + "' word?")){
+        if(!confirm("Delete [" + deleteRow.id_word + "] '" + deleteRow.word + "' word?")){
             return;
         }
 
-        deleteWord(deleteRow, {
+        deleteWord(deleteRow.id_word, {
             error: function (errorText) {
                 showError(errorText);
             },
