@@ -2,3 +2,5 @@ flask
 flask-sqlalchemy
 python-jose
 python-dateutil
+requests
+lxml

@@ -6,6 +6,7 @@ from server.api.dictionary.words import WordAPI
 from server.api.dictionary.translations import TranslationsAPI
 from server.api.dictionary.learn import LearnAPI
 from server.api.dictionary.words_datatable import WordsDataTableAPI
+from server.api.dictionary.autocomplete import AutoCompleteAPI
 
 api_blueprint = Blueprint('api_blueprint', __name__)
 api_blueprint.add_url_rule('/api/login', view_func=LoginAPI.as_view('login'), methods=['POST'])
@@ -25,3 +26,9 @@ api_blueprint.add_url_rule('/api/learn', view_func=learn_api_view, methods=['GET
 
 api_blueprint.add_url_rule('/api/words/jqdatatable', view_func=WordsDataTableAPI.as_view('words_jqdatatable'),
                            methods=['POST'])
+
+autocomplete_api_view = AutoCompleteAPI.as_view('autocomplete')
+api_blueprint.add_url_rule('/api/autocomplete/<string:word>', view_func=autocomplete_api_view, methods=['GET'],
+                           defaults={'id_word_type': None})
+api_blueprint.add_url_rule('/api/autocomplete/<string:word>/<int:id_word_type>', view_func=autocomplete_api_view,
+                           methods=['GET'])
