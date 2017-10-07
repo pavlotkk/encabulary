@@ -53,7 +53,16 @@ class ReversoDictionary:
         nodes = root.find_class('translation ltr dict')
 
         result = defaultdict(list)
-        pos = ['noun', 'verb', 'adjective', 'adverb', 'preposition', 'phrasal verb']
+        pos = {
+            'noun': 'noun',
+            'noun - feminine': 'noun',
+            'noun - masculine': 'noun',
+            'verb': 'verb',
+            'adjective': 'adjective',
+            'adverb': 'adverb',
+            'preposition': 'preposition',
+            'phrasal verb': 'phrasal verb'
+        }
         for n in nodes:
             span = n.xpath('div/span')
 
@@ -61,7 +70,7 @@ class ReversoDictionary:
             translation = n.text_content().strip()
 
             if word_type_name in pos:
-                result[word_type_name].append(translation)
+                result[pos[word_type_name]].append(translation)
 
         for k, v in result.items():
             yield ReversoItem(v, k)
