@@ -31,8 +31,6 @@ class OxfordDictionary:
         item.transcription = self._get_transcription_from_tree(tree)
         item.word_type_name = self._get_wort_type_name_from_tree(tree)
 
-        print(item)
-
         return item
 
     def _get_html_content_or_none(self, url):
