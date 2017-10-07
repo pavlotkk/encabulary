@@ -29,11 +29,11 @@ initdb:
 
 .PHONY: pytests
 pytests:
-	$(PYTEST) --junitxml pytest.results.xml $(TESTSDIR)/unit_tests -v
+	$(PYTEST) --junitxml TEST-pytest.results.xml $(TESTSDIR)/unit_tests -v
 
 .PHONY: unittests
 unittests:
-	$(UNITTEST) discover -v -s $(TESTSDIR)/functional_tests
+	$(PYTHON) -m xmlrunner discover -v -s $(TESTSDIR)/functional_tests
 
 .PHONY: tests
 tests:

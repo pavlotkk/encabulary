@@ -7,3 +7,5 @@ flake8-quotes
 pytest
 pytest-mock
 pytest-cov
+
+unittest-xml-reporting
