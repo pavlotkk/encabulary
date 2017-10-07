@@ -1,9 +1,16 @@
-PYTHON = python
+ENV = env
+PYBIN = $(ENV)/scripts
+PYTHON = $(PYBIN)/python
+PIP = $(PYBIN)/pip
 APPNAME = server
 PYTEST = $(PYTHON) -m pytest
 UNITTEST = $(PYTHON) -m unittest
 PYFLAKE8 = $(PYTHON) -m flake8
 TESTSDIR = $(APPNAME)/tests
+
+environ: requirements.txt requirements-dev.txt
+	virtualenv $(ENV)
+	$(PIP) install -r requirements-dev.txt
 
 .PHONY: help
 help:
@@ -20,10 +27,18 @@ run:
 initdb:
 	$(PYTHON) initdb.py
 
+.PHONY: pytests
+pytests:
+	$(PYTEST) --junitxml pytest.results.xml $(TESTSDIR)/unit_tests -v
+
+.PHONY: unittests
+unittests:
+	$(UNITTEST) discover -v -s $(TESTSDIR)/functional_tests
+
 .PHONY: tests
 tests:
-	$(PYTEST) $(TESTSDIR)/unit_tests -v
-	$(UNITTEST) discover -v -s $(TESTSDIR)/functional_tests
+	$(MAKE) pytests
+	$(MAKE) unittests
 
 .PHONY: flake8
 flake8:
