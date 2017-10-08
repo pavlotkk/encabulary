@@ -12,6 +12,7 @@ class DbWordType(db.Model):
     PHRASAL_VERB = 6
     CONJUNCTION = 7
     IDIOM = 8
+    PHRASE = 9
 
     id_type = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.Text, unique=True)
@@ -45,5 +46,6 @@ class DbWordType(db.Model):
             DbWordType(DbWordType.PREPOSITION, 'preposition'),
             DbWordType(DbWordType.PHRASAL_VERB, 'phrasal verb'),
             DbWordType(DbWordType.CONJUNCTION, 'conjunction'),
-            DbWordType(DbWordType.IDIOM, 'idiom')
+            DbWordType(DbWordType.IDIOM, 'idiom'),
+            DbWordType(DbWordType.PHRASE, 'phrase')
         ]
