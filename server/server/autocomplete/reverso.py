@@ -4,6 +4,8 @@ import requests
 from lxml import html
 from requests.exceptions import RequestException
 
+from server.autocomplete.utils import scrap_word_type
+
 
 class ReversoItem:
     def __init__(self, translations=None, word_type_name=None):
@@ -30,9 +32,12 @@ class ReversoDictionary:
         if not content:
             return items
 
-        tree = html.fromstring(content)
-        for i in self._get_items_from_tree(tree):
-            items.append(i)
+        try:
+            tree = html.fromstring(content)
+            for i in self._get_items_from_tree(tree):
+                items.append(i)
+        except KeyError as e:
+            pass
 
         return items
 
@@ -53,24 +58,14 @@ class ReversoDictionary:
         nodes = root.find_class('translation ltr dict')
 
         result = defaultdict(list)
-        pos = {
-            'noun': 'noun',
-            'noun - feminine': 'noun',
-            'noun - masculine': 'noun',
-            'verb': 'verb',
-            'adjective': 'adjective',
-            'adverb': 'adverb',
-            'preposition': 'preposition',
-            'phrasal verb': 'phrasal verb'
-        }
         for n in nodes:
             span = n.xpath('div/span')
 
-            word_type_name = span[0].get('title').lower().strip() if span else None
+            word_type_name = scrap_word_type(span[0].get('title').lower().strip() if span else None)
             translation = n.text_content().strip()
 
-            if word_type_name in pos:
-                result[pos[word_type_name]].append(translation)
+            if word_type_name:
+                result[word_type_name].append(translation)
 
         for k, v in result.items():
             yield ReversoItem(v, k)

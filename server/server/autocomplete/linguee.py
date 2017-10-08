@@ -2,6 +2,8 @@ import requests
 from lxml import html
 from requests.exceptions import RequestException
 
+from server.autocomplete.utils import scrap_word_type
+
 
 class LingueeItem:
     def __init__(self, translations=None, word_type_name=None):
@@ -27,9 +29,12 @@ class LingueeDictionary:
         if not content:
             return items
 
-        tree = html.fromstring(content)
-        for i in self._get_items_from_tree(tree):
-            items.append(i)
+        try:
+            tree = html.fromstring(content)
+            for i in self._get_items_from_tree(tree):
+                items.append(i)
+        except KeyError:
+            pass
 
         return items
 
@@ -51,7 +56,7 @@ class LingueeDictionary:
             if not word_type_name_list:
                 continue
 
-            item.word_type_name = word_type_name_list[0]
+            item.word_type_name = scrap_word_type(word_type_name_list[0].strip().lower())
 
             translations_nodes = n.find_class('translation sortablemg featured')
             for tr_node in translations_nodes:

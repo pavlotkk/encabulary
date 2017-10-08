@@ -2,6 +2,8 @@ import requests
 from lxml import html
 from requests.exceptions import RequestException
 
+from server.autocomplete.utils import scrap_word_type
+
 
 class OxfordItem:
     def __init__(self, transcription=None, word_type_name=None):
@@ -28,8 +30,12 @@ class OxfordDictionary:
             return item
 
         tree = html.fromstring(content)
-        item.transcription = self._get_transcription_from_tree(tree)
-        item.word_type_name = self._get_wort_type_name_from_tree(tree)
+
+        try:
+            item.transcription = self._get_transcription_from_tree(tree)
+            item.word_type_name = self._get_wort_type_name_from_tree(tree)
+        except KeyError:
+            pass
 
         return item
 
@@ -49,17 +55,17 @@ class OxfordDictionary:
             return None
 
         if type(pos) is list:
-            return pos[0]
+            pos = pos[0]
 
-        return pos
+        return scrap_word_type(pos.strip().lower())
 
     def _get_transcription_from_tree(self, tree):
-        pos = tree.xpath('//div[@class="pron-gs ei-g"]/span[@class="pron-g"]/span[@class="phon"]/text()')
+        transcription = tree.xpath('//div[@class="pron-gs ei-g"]/span[@class="pron-g"]/span[@class="phon"]/text()')
 
-        if not pos:
+        if not transcription:
             return None
 
-        if type(pos) is list:
-            return pos[0]
+        if type(transcription) is list:
+            transcription = transcription[0]
 
-        return pos
+        return transcription
