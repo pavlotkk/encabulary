@@ -1,5 +1,5 @@
 [flake8]
-exclude = .git,__pycache__,.build
+exclude = .git,__pycache__,build,env
 filename = *.py
 max-complexity = 10
 max-line-length = 150

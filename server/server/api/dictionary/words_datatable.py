@@ -40,7 +40,7 @@ class WordsDataTableAPI(MethodView):
         )
 
         if request.filter_by is not None:
-            filter_param = "%" + request.filter_by + "%"
+            filter_param = '%' + request.filter_by + '%'
             db_words = db_words.filter(
                 DbWord.word.ilike(filter_param),
             )
@@ -77,16 +77,21 @@ class WordsDataTableAPI(MethodView):
             word, word_type, repeat_db_dts = word_data
 
             return {
-                "id_word": word.id_word,
-                "word": word.word,
-                "transcription": word.transcription,
-                "id_type": None if word_type is None else word_type.id_type,
-                "type_name": None if word_type is None else word_type.name,
-                "translations": list(map(lambda i: {'id': i[0], 'translation': i[1]}, self._get_db_translation(word.id_word, current_user.id_language))),
-                "learn_score": word.score,
-                "add_db_dts": dates.to_iso_datetime_string(word.add_db_dts),
-                "last_learn_db_dts": dates.to_iso_datetime_string(word.last_learn_db_dts),
-                "repeat_db_dts": dates.to_iso_datetime_string(repeat_db_dts)
+                'id_word': word.id_word,
+                'word': word.word,
+                'transcription': word.transcription,
+                'id_type': None if word_type is None else word_type.id_type,
+                'type_name': None if word_type is None else word_type.name,
+                'translations': list(
+                    map(
+                        lambda i: {'id': i[0], 'translation': i[1]},
+                        self._get_db_translation(word.id_word, current_user.id_language)
+                    )
+                ),
+                'learn_score': word.score,
+                'add_db_dts': dates.to_iso_datetime_string(word.add_db_dts),
+                'last_learn_db_dts': dates.to_iso_datetime_string(word.last_learn_db_dts),
+                'repeat_db_dts': dates.to_iso_datetime_string(repeat_db_dts)
             }
 
         table = list(map(map_func, db_words))
