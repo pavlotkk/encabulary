@@ -42,7 +42,7 @@ Frontend:
 
 ## TODO:
 * Add API documentation
-* Add install and usage tutorial (with screenshots)
+* ~~Add install and usage tutorial (with screenshots)~~
 * ~~Add demo user and deploy project on test server~~
 * Add user registration
 * ~~Automaticaly download transcription and translate for your language~~
