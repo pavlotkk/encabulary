@@ -3,3 +3,8 @@
 
 instance/
 env/
+server/frontend/node_modules/
+server/frontend/dist/
+server/frontend/npm-debug.log*
+server/frontend/yarn-debug.log*
+server/frontend/yarn-error.log*
