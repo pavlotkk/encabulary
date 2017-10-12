@@ -7,6 +7,7 @@ PYTEST = $(PYTHON) -m pytest
 UNITTEST = $(PYTHON) -m unittest
 PYFLAKE8 = $(PYTHON) -m flake8
 TESTSDIR = $(APPNAME)/tests
+FRONTEND = $(APPNAME)/frontend
 
 environ: requirements.txt requirements-dev.txt
 	virtualenv $(ENV)
@@ -14,10 +15,14 @@ environ: requirements.txt requirements-dev.txt
 
 .PHONY: help
 help:
-	@echo "make run     # run server"
-	@echo "make initdb  # drop db, create all tables and init dicts with data"
-	@echo "make tests   # run tests"
-	@echo "make flake8  # run flake8"
+	@echo "make run                 # run server"
+	@echo "make initdb              # drop db, create all tables and init dicts with data"
+	@echo "make tests               # run tests"
+	@echo "make flake8              # run flake8"
+	@echo "=========================#"
+	@echo "make frontend-install    # install node modules"
+	@echo "make frontend-dev        # run webpack dev server"
+	@echo "make frontend-build      # build frontend"
 
 .PHONY: run
 run:
@@ -43,3 +48,15 @@ tests:
 .PHONY: flake8
 flake8:
 	$(PYFLAKE8) $(APPNAME)
+
+.PHONY: frontend-install
+frontend-install:
+	$(MAKE) -C $(FRONTEND) install
+
+.PHONY: frontend-dev
+frontend-dev:
+	$(MAKE) -C $(FRONTEND) dev
+
+.PHONY: frontend-build
+frontend-build:
+	$(MAKE) -C $(FRONTEND) build
