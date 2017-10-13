@@ -7,12 +7,12 @@ from server.database import db
 from server.database.management.db_manager import save_db_changes
 from server.database.model import DbWord, DbTranslation
 from server.database.queries.users import get_db_user_by_id
-from server.decorators.access_token_required import access_token_required
+from server.decorators.access_token_required import AccessTokenRequired
 
 
 class TranslationsAPI(MethodView):
 
-    @access_token_required
+    @AccessTokenRequired()
     def post(self):
         request = get_current_request()
         current_user = get_db_user_by_id(get_current_user_id())
@@ -38,7 +38,7 @@ class TranslationsAPI(MethodView):
 
         return ok_response({'id_translation': db_translation.id_translation})
 
-    @access_token_required
+    @AccessTokenRequired()
     def get(self, id_translation):
         current_user_id = get_current_user_id()
 
@@ -56,7 +56,7 @@ class TranslationsAPI(MethodView):
 
         return ok_response({'translation': db_tr_to_dic})
 
-    @access_token_required
+    @AccessTokenRequired()
     def put(self, id_translation):
         request = get_current_request()
         current_user_id = get_current_user_id()
@@ -77,7 +77,7 @@ class TranslationsAPI(MethodView):
 
         return ok_response()
 
-    @access_token_required
+    @AccessTokenRequired()
     def delete(self, id_translation):
         current_user_id = get_current_user_id()
 
