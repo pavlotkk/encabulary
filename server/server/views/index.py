@@ -8,7 +8,7 @@ class IndexView(MethodView):
     def get(self):
         user_id = get_current_user_id()
 
-        if not user_id:
+        if user_id is not None:
             return render_template('index.html')
 
         return redirect('/learn')
