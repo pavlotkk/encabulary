@@ -7,13 +7,13 @@ from server.database import db
 from server.database.management.db_manager import save_db_changes
 from server.database.model import DbWord, DbTranslation, DbWordType
 from server.database.queries import get_db_user_by_id
-from server.decorators.access_token_required import access_token_required
+from server.decorators.access_token_required import AccessTokenRequired
 from server.tools import dates
 
 
 class WordAPI(MethodView):
 
-    @access_token_required
+    @AccessTokenRequired()
     def post(self):
         request = get_current_request()
 
@@ -45,7 +45,7 @@ class WordAPI(MethodView):
 
         return ok_response({'id_word': db_word.id_word})
 
-    @access_token_required
+    @AccessTokenRequired()
     def put(self, id_word):
         request = get_current_request()
 
@@ -68,7 +68,7 @@ class WordAPI(MethodView):
 
         return ok_response()
 
-    @access_token_required
+    @AccessTokenRequired()
     def get(self, id_word):
         user_id = get_current_user_id()
 
@@ -98,7 +98,7 @@ class WordAPI(MethodView):
             'word': db_word_to_dict
         })
 
-    @access_token_required
+    @AccessTokenRequired()
     def delete(self, id_word):
         user_id = get_current_user_id()
 

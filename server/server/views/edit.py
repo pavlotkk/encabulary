@@ -3,11 +3,11 @@ from flask.views import MethodView
 
 from server.database import db
 from server.database.model import DbWordType
-from server.decorators.access_token_required import access_token_required
+from server.decorators.access_token_required import AccessTokenRequired
 
 
 class EditView(MethodView):
-    @access_token_required
+    @AccessTokenRequired(redirect=True)
     def get(self):
         word_types = db.session.query(
             DbWordType

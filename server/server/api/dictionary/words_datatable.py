@@ -6,13 +6,13 @@ from server.api.base.response import ok_jqdatatable_response
 from server.database import db
 from server.database.model import DbWord, DbWordType, DbTranslation, DbUserWordRepeat
 from server.database.queries import get_db_user_by_id
-from server.decorators.access_token_required import access_token_required
+from server.decorators.access_token_required import AccessTokenRequired
 from server.tools import dates
 
 
 class WordsDataTableAPI(MethodView):
 
-    @access_token_required
+    @AccessTokenRequired()
     def post(self):
         request = get_current_request()
         current_user = get_db_user_by_id(get_current_user_id())

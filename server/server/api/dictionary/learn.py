@@ -12,7 +12,7 @@ from server.database.management.db_manager import save_db_changes
 from server.database.model import DbWord, DbWordType, DbTranslation, DbUserWordRepeat
 from server.database.model.translation_direction import TranslationDirection
 from server.database.queries import get_db_user_by_id, get_db_user_word_by_id, get_min_db_repeat
-from server.decorators.access_token_required import access_token_required
+from server.decorators.access_token_required import AccessTokenRequired
 from server.tools import types
 
 
@@ -29,7 +29,7 @@ class LearnAPI(MethodView):
         self.words_learned_score = current_app.config['WORD_LEARNED_SCORE']
         self.similar_ration = current_app.config['SIMILAR_RATIO']
 
-    @access_token_required
+    @AccessTokenRequired()
     def get(self):
         current_user = get_db_user_by_id(get_current_user_id())
 
@@ -60,7 +60,7 @@ class LearnAPI(MethodView):
             ]
         })
 
-    @access_token_required
+    @AccessTokenRequired()
     def post(self):
         request = get_current_request()
         current_user = get_db_user_by_id(get_current_user_id())

@@ -1,6 +1,10 @@
 # pyencabulary
 Web application for extending English vocabulary
 
+[Demo](http://tpapy.pythonanywhere.com)
+**login**: demo
+**password**: demo
+
 ## General information
 * Add personal English words with transcription and multiple translations
 * Learn English every day: remember 10 words in a day
@@ -20,10 +24,26 @@ Frontend:
 * [Datatables](https://datatables.net/)
 * [Bootstrap tags input](http://bootstrap-tagsinput.github.io/bootstrap-tagsinput/examples/)
 
+## Config and run
+#### Create virtual environment and install necessary packages
+``` make ```
+
+#### Create database (see config.py or instance/config.py)
+``` make initdb ```
+
+#### Run tests
+``` make tests ```
+
+#### Run application
+``` make run ```
+
+#### Help
+``` make help ```
+
 ## TODO:
 * Add API documentation
-* Add install and usage tutorial (with screenshots)
-* Add demo user and deploy project on test server
+* ~~Add install and usage tutorial (with screenshots)~~
+* ~~Add demo user and deploy project on test server~~
 * Add user registration
 * ~~Automaticaly download transcription and translate for your language~~
 * Native mobile application for iOS and Android
