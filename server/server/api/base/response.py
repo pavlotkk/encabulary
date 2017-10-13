@@ -84,7 +84,9 @@ def bad_response(error, http_code=200):
 
 
 def un_authorized_response():
-    return bad_response('Unauthorized', 401)
+    response, code = bad_response('Unauthorized', 401)
+    response.set_cookie('access_token', '', expires=0)
+    return response, code
 
 
 def _jsonify(response):

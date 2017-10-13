@@ -16,11 +16,11 @@ class AccessTokenRequired:
             try:
                 token = get_current_request_token(silent=False)
             except (ValueError, jose_ex.ExpiredSignatureError, jose_ex.JWTError):
-                return un_authorized_response()
+                return self.un_authorized_response_or_redirect()
 
             db_user = db_query.get_db_user_by_id(token.user_id)
             if db_user.id_session is None:
-                return un_authorized_response()
+                return self.un_authorized_response_or_redirect()
 
             return fn(*args, **kwargs)
         return is_token_accepted
