@@ -23,7 +23,11 @@ class DbUserWordRepeat(db.Model):
         now = datetime.datetime.utcnow()
 
         self.id_repeat = db_repeat.id_repeat
-        self.repeat_after_db_dts = now + datetime.timedelta(days=db_repeat.repeat_days)
+        self.repeat_after_db_dts = (
+            now + datetime.timedelta(days=db_repeat.repeat_days)
+        ).replace(
+            hour=0, minute=0, second=0
+        )
 
     def set_next_repeat_dts(self):
         db_repeats = db.session.query(DbRepeat).order_by(DbRepeat.repeat_days).all()
