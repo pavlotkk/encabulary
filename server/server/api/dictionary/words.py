@@ -28,6 +28,8 @@ class WordAPI(MethodView):
         if not word:
             return bad_response('word is required')
 
+        word = word.lower()
+
         if not id_word_type:
             return bad_response('id_type is required')
 
@@ -57,6 +59,8 @@ class WordAPI(MethodView):
 
         if not word:
             return bad_response('word is required')
+
+        word = word.lower()
 
         if not id_word_type:
             return bad_response('id_type is required')

@@ -26,6 +26,8 @@ class TranslationsAPI(MethodView):
         if not translation:
             return bad_response('translation is required')
 
+        translation = translation.lower()
+
         try:
             db_translation = self._add_db_translation_or_raise_exception(
                 current_user.id_user,
@@ -65,6 +67,8 @@ class TranslationsAPI(MethodView):
 
         if not translation:
             return bad_response('translation is required')
+
+        translation = translation.lower()
 
         try:
             self._update_db_translation_or_raise_exception(
