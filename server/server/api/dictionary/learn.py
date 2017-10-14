@@ -69,7 +69,7 @@ class LearnAPI(MethodView):
         if direction is None:
             return bad_response('direction is required')
 
-        direction = direction.lower()
+        direction = direction.strip().lower()
         if direction not in [TranslationDirection.ORIGINAL, TranslationDirection.USER_LANGUAGE]:
             return bad_response('unknown direction type. Supported types are "original", "user_language"')
 
@@ -80,6 +80,9 @@ class LearnAPI(MethodView):
         for answer_obj in user_answers:
             word_id = types.to_int(answer_obj.get('id_word'))
             answer = answer_obj.get('answer')
+
+            if answer is not None:
+                answer = answer.strip().lower()
 
             if word_id is None:
                 continue
