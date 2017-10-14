@@ -1,6 +1,8 @@
-from server.tools import types
 from flask import request
+from jose import exceptions as jose_ex
 
+import server.database.queries as db_query
+from server.tools import types
 from server.tools.jwt import Jwt
 
 
@@ -146,5 +148,21 @@ def get_current_request_token(silent=True):
 
     try:
         return Jwt.from_http_request(request)
-    except Exception:
+    except (ValueError, jose_ex.ExpiredSignatureError, jose_ex.JWTError):
         return None
+
+
+def is_authenticated():
+    try:
+        token = get_current_request_token(silent=False)
+    except (ValueError, jose_ex.ExpiredSignatureError, jose_ex.JWTError):
+        return False
+
+    db_user = db_query.get_db_user_by_id(token.user_id)
+    if db_user.id_session is None:
+        return False
+
+    if db_user.id_session != token.session_id:
+        return False
+
+    return True
