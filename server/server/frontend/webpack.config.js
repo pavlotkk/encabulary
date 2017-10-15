@@ -52,8 +52,7 @@ module.exports = {
         new CopyWebpackPlugin([
             { from: 'src/assets/favicon', to: 'assets/img/favicon' },
             { from: 'src/assets/css', to: 'assets/css' },
-            { from: 'src/assets/js', to: 'assets/js' },
-            { from: 'templates/layout.html', to: 'templates' }
+            { from: 'src/assets/js', to: 'assets/js' }
         ]),
         new HtmlWebpackPlugin({
             filename: 'templates/index.html',
