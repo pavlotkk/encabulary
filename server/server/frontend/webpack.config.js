@@ -52,13 +52,14 @@ module.exports = {
         new CopyWebpackPlugin([
             { from: 'src/assets/favicon', to: 'assets/img/favicon' },
             { from: 'src/assets/css', to: 'assets/css' },
-            { from: 'src/assets/js', to: 'assets/js' }
+            { from: 'src/assets/js', to: 'assets/js' },
+            { from: 'templates/layout.html', to: 'templates' }
         ]),
         new HtmlWebpackPlugin({
             filename: 'templates/index.html',
             template: 'templates/index.html',
             chunks: ['index'],
-            inject: true,
+            inject: false,
             chunksSortMode: 'dependency'
         })
     ]
