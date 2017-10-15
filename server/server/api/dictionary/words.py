@@ -140,6 +140,8 @@ class WordAPI(MethodView):
         db_word = self._add_word_to_db(id_user, word, id_word_type, transcription)
 
         for tr in translations:
+            tr = tr.strip().lower()
+
             db_translation = db.session.query(
                 DbTranslation
             ).filter(
