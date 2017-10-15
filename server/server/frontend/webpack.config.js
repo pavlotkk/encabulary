@@ -1,15 +1,15 @@
 const path = require('path');
 const webpack = require('webpack');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
+var CopyWebpackPlugin = require('copy-webpack-plugin');
 
 module.exports = {
     entry: {
-        vueintro: './src/intro.js'
+        index: './src/index.js'
     },
     output: {
         path: path.resolve(__dirname, './dist/'),
-        publicPath: '/dist/',
-        filename: 'static/js/[name].[hash].min.js'
+        filename: 'assets/js/[name].[hash].min.js'
     },
     module: {
         rules: [
@@ -30,7 +30,7 @@ module.exports = {
                 test: /\.(png|jpg|gif|svg)$/,
                 loader: 'file-loader',
                 options: {
-                    name: 'static/img/[name].[ext]?[hash]'
+                    name: 'assets/img/[name].[ext]?[hash]'
                 }
             }
         ]
@@ -49,10 +49,15 @@ module.exports = {
     },
     devtool: '#eval-source-map',
     plugins: [
+        new CopyWebpackPlugin([
+            { from: 'src/assets/favicon', to: 'assets/img/favicon' },
+            { from: 'src/assets/css', to: 'assets/css' },
+            { from: 'src/assets/js', to: 'assets/js' }
+        ]),
         new HtmlWebpackPlugin({
-            filename: 'templates/intro.html',
-            template: 'templates/intro.html',
-            chunks: ['vueintro'],
+            filename: 'templates/index.html',
+            template: 'templates/index.html',
+            chunks: ['index'],
             inject: true,
             chunksSortMode: 'dependency'
         })

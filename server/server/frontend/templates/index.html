@@ -1,11 +1,60 @@
 <!DOCTYPE html>
-<html lang="en">
-  <head>
+<html>
+<head>
+    <!-- meta -->
     <meta charset="utf-8">
-    <title>pyencabulary</title>
-  </head>
-  <body>
-    <div id="app"></div>
-    <!-- built files should go here, but will be auto injected -->
-  </body>
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no, minimal-ui">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+
+    <!-- favicon -->
+    <link rel="icon" href="/assets/img/favicon/favicon.ico">
+    <link rel="apple-touch-icon" sizes="180x180" href="/assets/img/favicon/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="/assets/img/favicon/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/assets/img/favicon/favicon-16x16.png">
+    <link rel="manifest" href="/assets/img/favicon/manifest.json">
+    <link rel="mask-icon" href="/assets/img/favicon/safari-pinned-tab.svg" color="#5bbad5">
+
+    <!-- title -->
+    <title>EnCabulary</title>
+
+    <!-- css -->
+    <link rel="stylesheet" href="/assets/css/framework7.ios.min.css">
+    <link rel="stylesheet" href="/assets/css/framework7.ios.colors.min.css">
+    <link rel="stylesheet" href="/assets/css/site.css">
+</head>
+<body>
+<!-- Status bar overlay for fullscreen mode-->
+<div class="statusbar-overlay"></div>
+
+<!-- Views-->
+<div class="views">
+    <!-- Your main view, should have "view-main" class-->
+    <div class="view view-main">
+        <!-- Top Navbar-->
+        <div class="navbar">
+            <div class="navbar-inner">
+                <!-- We have home navbar without left link-->
+                <div class="center sliding">EnCabulary</div>
+            </div>
+        </div>
+        <!-- Pages, because we need fixed-through navbar and toolbar, it has additional appropriate classes-->
+        <div class="pages navbar-through toolbar-through">
+            <!-- Page, data-page contains page name-->
+            <div data-page="index" class="page">
+                <!-- Scrollable page content-->
+                <div class="page-content">
+                    <div id="app">
+                        <login-view></login-view>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- js -->
+<script type="text/javascript" src="/assets/js/framework7.min.js"></script>
+
+</body>
 </html>
