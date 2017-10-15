@@ -5,7 +5,8 @@ var CopyWebpackPlugin = require('copy-webpack-plugin');
 
 module.exports = {
     entry: {
-        index: './src/index.js'
+        index: './src/index.js',
+        learn: './src/learn.js'
     },
     output: {
         path: path.resolve(__dirname, './dist/'),
@@ -58,6 +59,13 @@ module.exports = {
             filename: 'templates/index.html',
             template: 'templates/index.html',
             chunks: ['index'],
+            inject: false,
+            chunksSortMode: 'dependency'
+        }),
+        new HtmlWebpackPlugin({
+            filename: 'templates/learn.html',
+            template: 'templates/learn.html',
+            chunks: ['learn'],
             inject: false,
             chunksSortMode: 'dependency'
         })
