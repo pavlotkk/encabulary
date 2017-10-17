@@ -43,7 +43,7 @@
             }
         },
         methods: {
-            showLoading(show){
+            showLoading: function(show){
                 if(this.loading == show){
                     return;
                 }
