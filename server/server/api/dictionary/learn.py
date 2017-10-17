@@ -234,7 +234,9 @@ class LearnAPI(MethodView):
         ).first()
 
         if db_repeat is not None:
-            db_repeat.set_next_repeat_dts()
+            now = datetime.datetime.utcnow()
+            if db_repeat.repeat_after_db_dts < now:
+                db_repeat.set_next_repeat_dts()
         else:
             min_repeat = get_min_db_repeat()
             db_repeat = DbUserWordRepeat(db_word.id_word)
