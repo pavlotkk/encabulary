@@ -7,8 +7,8 @@ def create_app(config=None):
 
     app = Flask(
         __name__,
-        static_folder="frontend/dist/assets",
-        template_folder="frontend/dist/templates",
+        static_folder='frontend/dist/assets',
+        template_folder='frontend/dist/templates',
         instance_relative_config=True
     )
     app.config.from_object('config')

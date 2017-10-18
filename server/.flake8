@@ -1,5 +1,5 @@
 [flake8]
-exclude = .git,__pycache__,build,env
+exclude = .git,__pycache__,build,env,node_modules,patch.py
 filename = *.py
 max-complexity = 10
 max-line-length = 150
