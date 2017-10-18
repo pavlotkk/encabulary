@@ -82,9 +82,9 @@
 
                     this._redirectToNextPage();
 
-                }, function (error) {
+                }, function (respose) {
                     this.showLoading(false);
-                    this._alert(error);
+                    this._alert("" + response.status + " " + response.statusText);
                 });
             },
             _alert: function (message) {
