@@ -41,6 +41,14 @@ class BaseRequestDecorator:
 
         return values
 
+    def get_user_agent_platform(self):
+        return self.http_request.user_agent.platform
+
+    def is_from_mobile_device(self):
+        phones = ['android', 'iphone', 'ipad']
+
+        return self.get_user_agent_platform() in phones
+
 
 class FormRequestDecorator(BaseRequestDecorator):
     """Form url encoded flask request wrapper"""

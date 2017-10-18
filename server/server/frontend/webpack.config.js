@@ -5,12 +5,12 @@ var CopyWebpackPlugin = require('copy-webpack-plugin');
 
 module.exports = {
     entry: {
-        index: './src/index.js',
-        learn: './src/learn.js'
+        index: './mobile/src/index.js',
+        learn: './mobile/src/learn.js'
     },
     output: {
         path: path.resolve(__dirname, './dist/'),
-        filename: 'assets/js/[name].[hash].min.js'
+        filename: 'assets/mobile/js/[name].[hash].min.js'
     },
     module: {
         rules: [
@@ -31,7 +31,7 @@ module.exports = {
                 test: /\.(png|jpg|gif|svg)$/,
                 loader: 'file-loader',
                 options: {
-                    name: 'assets/img/[name].[ext]?[hash]'
+                    name: 'assets/mobile/img/[name].[ext]?[hash]'
                 }
             }
         ]
@@ -51,20 +51,23 @@ module.exports = {
     devtool: '#eval-source-map',
     plugins: [
         new CopyWebpackPlugin([
-            { from: 'src/assets/favicon', to: 'assets/img/favicon' },
-            { from: 'src/assets/css', to: 'assets/css' },
-            { from: 'src/assets/js', to: 'assets/js' }
+            { from: 'mobile/src/assets/favicon', to: 'assets/img/favicon' },
+            { from: 'mobile/src/assets/css', to: 'assets/mobile/css' },
+            { from: 'mobile/src/assets/js', to: 'assets/mobile/js' },
+            // desktop
+            { from: 'desktop/templates', to: 'templates/desktop'},
+            { from: 'desktop/assets', to: 'assets/desktop'}
         ]),
         new HtmlWebpackPlugin({
-            filename: 'templates/index.html',
-            template: 'templates/index.html',
+            filename: 'templates/mobile/index.html',
+            template: 'mobile/templates/index.html',
             chunks: ['index'],
             inject: false,
             chunksSortMode: 'dependency'
         }),
         new HtmlWebpackPlugin({
-            filename: 'templates/learn.html',
-            template: 'templates/learn.html',
+            filename: 'templates/mobile/learn.html',
+            template: 'mobile/templates/learn.html',
             chunks: ['learn'],
             inject: false,
             chunksSortMode: 'dependency'
