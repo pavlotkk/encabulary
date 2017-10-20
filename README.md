@@ -19,13 +19,19 @@ Backend:
 * [Requests](http://docs.python-requests.org/en/master/) and [lxml](http://lxml.de/) for html scraping
 
 Frontend:
-* [Bootstrap](http://getbootstrap.com/)
-* [JQuery](https://jquery.com/)
-* [Datatables](https://datatables.net/)
-* [Bootstrap tags input](http://bootstrap-tagsinput.github.io/bootstrap-tagsinput/examples/)
+* [Bootstrap](http://getbootstrap.com/) (desktop only)
+* [JQuery](https://jquery.com/) (desktop only)
+* [Datatables](https://datatables.net/) (desktop only)
+* [Bootstrap tags input](http://bootstrap-tagsinput.github.io/bootstrap-tagsinput/examples/) (desktop only)
+* [Vue.js](https://vuejs.org/) (mobile only)
+* [Framework7](https://framework7.io/) (mobile only)
 
 ## Config and run
-#### Create virtual environment and install necessary packages
+
+#### Help
+``` make help ```
+
+#### Create virtual environment and install necessary packages. Install node packages and build frontend
 ``` make ```
 
 #### Create database (see config.py or instance/config.py)
@@ -37,8 +43,15 @@ Frontend:
 #### Run application
 ``` make run ```
 
-#### Help
-``` make help ```
+#### Install node modules
+``` make frontend-install ```
+
+#### Run webpack dev server
+``` make frontend-dev ```
+
+#### Build frontend
+``` make frontend-build ```
+
 
 ## TODO:
 * Add API documentation
@@ -47,4 +60,4 @@ Frontend:
 * Add user registration
 * ~~Automaticaly download transcription and translate for your language~~
 * Native mobile application for iOS and Android
-* Use modern js library: React, Angular, Vue, etc
+* ~~Use modern js library: React, Angular, Vue, etc~~
