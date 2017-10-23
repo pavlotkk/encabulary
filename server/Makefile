@@ -12,6 +12,8 @@ FRONTEND = $(APPNAME)/frontend
 environ: requirements.txt requirements-dev.txt
 	virtualenv $(ENV)
 	$(PIP) install -r requirements-dev.txt
+	$(MAKE) frontend-install
+	$(MAKE) frontend-build
 
 .PHONY: help
 help:

@@ -181,7 +181,7 @@
 
                 let result = this.data.current.result;
                 let total = result.mistakes_count + result.ok_count;
-                value = Math.round(result.mistakes_count * 100 / total);
+                value = Math.round(result.ok_count * 100 / total);
 
                 return value;
             }
