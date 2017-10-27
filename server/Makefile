@@ -9,14 +9,9 @@ PYFLAKE8 = $(PYTHON) -m flake8
 TESTSDIR = $(APPNAME)/tests
 FRONTEND = $(APPNAME)/frontend
 
-environ: requirements.txt requirements-dev.txt
-	virtualenv $(ENV)
-	$(PIP) install -r requirements-dev.txt
-	$(MAKE) frontend-install
-	$(MAKE) frontend-build
-
 .PHONY: help
 help:
+	@echo "make install             # install project"
 	@echo "make run                 # run server"
 	@echo "make initdb              # drop db, create all tables and init dicts with data"
 	@echo "make tests               # run tests"
@@ -25,6 +20,13 @@ help:
 	@echo "make frontend-install    # install node modules"
 	@echo "make frontend-dev        # run webpack dev server"
 	@echo "make frontend-build      # build frontend"
+
+.PHONY: install
+install: requirements.txt requirements-dev.txt
+	virtualenv $(ENV)
+	$(PIP) install -r requirements-dev.txt
+	$(MAKE) frontend-install
+	$(MAKE) frontend-build
 
 .PHONY: run
 run:
