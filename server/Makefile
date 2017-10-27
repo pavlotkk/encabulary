@@ -23,7 +23,7 @@ help:
 
 .PHONY: install
 install: requirements.txt requirements-dev.txt
-	virtualenv $(ENV)
+	python3 -m virtualenv $(ENV)
 	$(PIP) install -r requirements-dev.txt
 	$(MAKE) frontend-install
 	$(MAKE) frontend-build
