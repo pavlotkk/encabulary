@@ -1,6 +1,12 @@
 ENV = env
-PYBIN = $(ENV)/scripts
+
+PYBIN_WINDOWS = $(ENV)/Scripts
+PYBIN_LINUX = $(ENV)/bin
+PYBIN = $(PYBIN_LINUX)
+
+DEFAULT_PYTHON = python3
 PYTHON = $(PYBIN)/python
+
 PIP = $(PYBIN)/pip
 APPNAME = server
 PYTEST = $(PYTHON) -m pytest
@@ -23,7 +29,7 @@ help:
 
 .PHONY: install
 install: requirements.txt requirements-dev.txt
-	python3 -m virtualenv $(ENV)
+	$(DEFAULT_PYTHON) -m virtualenv $(ENV)
 	$(PIP) install -r requirements-dev.txt
 	$(MAKE) frontend-install
 	$(MAKE) frontend-build
