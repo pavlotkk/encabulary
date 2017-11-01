@@ -8,4 +8,5 @@ server/frontend/dist/
 server/frontend/npm-debug.log*
 server/frontend/yarn-debug.log*
 server/frontend/yarn-error.log*
-server/*.db
+server/local.*.db
+server/test.*.db
