@@ -2,7 +2,7 @@ ENV = env
 
 PYBIN_WINDOWS = $(ENV)/Scripts
 PYBIN_LINUX = $(ENV)/bin
-PYBIN = $(PYBIN_WINDOWS)
+PYBIN = $(PYBIN_LINUX)
 
 DEFAULT_PYTHON = python
 PYTHON = $(PYBIN)/python
