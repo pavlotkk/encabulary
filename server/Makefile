@@ -4,7 +4,7 @@ PYBIN_WINDOWS = $(ENV)/Scripts
 PYBIN_LINUX = $(ENV)/bin
 PYBIN = $(PYBIN_LINUX)
 
-DEFAULT_PYTHON = python
+DEFAULT_PYTHON = python3
 PYTHON = $(PYBIN)/python
 
 PIP = $(PYBIN)/pip
