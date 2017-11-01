@@ -69,9 +69,8 @@ flake8:
 
 .PHONY: docker
 docker:
-	$(MAKE) docker-stop
-	$(MAKE) docker-build
-	$(MAKE) docker-run
+	$(MAKE) docker-stop && $(MAKE) docker-build || $(MAKE) docker-build
+	$(MAKE) docker-start || $(MAKE) docker-run
 
 .PHONY: docker-stop
 docker-stop:
