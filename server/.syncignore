@@ -1,6 +1,12 @@
 *.pyc
 .idea
-
+.dockerignore
+.flake8
+.gitignore
+encabulary.nginx.conf
+encabulary.supervisor.conf
+encabulary.uwsgi.ini
+encabulary.sync.sh
 instance/
 env/
 server/frontend/node_modules/
