@@ -1,7 +1,7 @@
 # pyencabulary
 Web application for extending English vocabulary
 
-[Demo](http://tpapy.pythonanywhere.com)
+[Demo](http://openprojects.xyz)
 **login**: demo
 **password**: demo
 
