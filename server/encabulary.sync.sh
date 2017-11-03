@@ -1,9 +1,9 @@
 #!/usr/bin/env bash
 
 rsync -rhv --exclude-from .syncerignore ./ /usr/share/nginx/www/encabulary
-rsync -rhv server/encabulary.supervisor.conf /etc/supervisor/conf.d/
-rsync -rhv server/encabulary.uwsgi.ini /etc/uwsgi/
-rsync -rhv server/encabulary.nginx.conf /etc/nginx/sites-available/
+rsync -rhv encabulary.supervisor.conf /etc/supervisor/conf.d/
+rsync -rhv encabulary.uwsgi.ini /etc/uwsgi/
+rsync -rhv encabulary.nginx.conf /etc/nginx/sites-available/
 ln -sf /etc/nginx/sites-available/encabulary.nginx.conf /etc/nginx/sites-enabled
 
 chown -R www-data /usr/share/nginx/www/encabulary
