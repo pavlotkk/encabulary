@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html>
+<head>
+    ${require('html-loader!./components/meta.html')}
+    ${require('html-loader!./components/favicon.html')}
+
+    <title>EnCabulary</title>
+
+    ${require('html-loader!./components/css.html')}
+    <link rel="stylesheet" href="/assets/css/site.css">
+</head>
+
+
+<body>
+<div class="views">
+    <div class="view view-main">
+        <!-- Top Navbar-->
+        <div class="navbar">
+            <div class="navbar-inner">
+                <div class="center sliding">EnCabulary</div>
+            </div>
+        </div>
+        <div class="pages navbar-through toolbar-through">
+            <div class="page">
+                <div class="page-content">
+                    <div id="app">
+                        <login-view></login-view>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+${require('html-loader!./components/js.html')}
+<% for (var chunk in htmlWebpackPlugin.files.chunks) { %>
+<script src="<%= htmlWebpackPlugin.files.chunks[chunk].entry %>"></script>
+<% } %>
+
+</body>
+
+</html>

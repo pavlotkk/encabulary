@@ -1,0 +1,9 @@
+#errorContainer {
+    text-align: center;
+    color: white;
+}
+
+ol.row-ol {
+    padding-left: 15px;
+    margin-bottom: 0px;
+}

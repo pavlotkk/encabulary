@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html>
+<head>
+    ${require('html-loader!./components/meta.html')}
+    ${require('html-loader!./components/favicon.html')}
+
+    <title>EnCabulary</title>
+
+    ${require('html-loader!./components/css.html')}
+    <link rel="stylesheet" href="/assets/mobile/css/site.css">
+</head>
+
+
+<body class="framework7-root">
+${require('html-loader!./components/left-panel.html')}
+
+<!-- Views-->
+<div class="views">
+    <!-- Your main view, should have "view-main" class-->
+    <div class="view view-main">
+        ${require('html-loader!./components/top-navbar.html')}
+        <div class="pages navbar-through toolbar-through">
+            <div class="page">
+                <div class="page-content">
+                    <div id="app">
+                        <learn-view></learn-view>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+${require('html-loader!./components/js.html')}
+<% for (var chunk in htmlWebpackPlugin.files.chunks) { %>
+<script src="<%= htmlWebpackPlugin.files.chunks[chunk].entry %>"></script>
+<% } %>
+
+</body>
+
+</html>

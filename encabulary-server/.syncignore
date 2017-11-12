@@ -1,0 +1,17 @@
+*.pyc
+.idea
+.dockerignore
+.flake8
+.gitignore
+encabulary.nginx.conf
+encabulary.supervisor.conf
+encabulary.uwsgi.ini
+encabulary.sync.sh
+instance/
+env/
+server/frontend/node_modules/
+server/frontend/npm-debug.log*
+server/frontend/yarn-debug.log*
+server/frontend/yarn-error.log*
+server/local.*.db
+server/test.*.db
