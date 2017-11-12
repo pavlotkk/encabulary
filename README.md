@@ -1,4 +1,4 @@
-# pyencabulary
+# encabulary
 Web application for extending English vocabulary
 
 [Demo](http://openprojects.xyz)
